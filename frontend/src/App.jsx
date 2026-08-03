@@ -16,13 +16,13 @@ import Logs from './pages/Logs';
 
 /** Splash screen React — même design que le splash HTML natif */
 const SplashScreen = () => (
-  <div className="fixed inset-0 z-[9998] flex flex-col items-center justify-center"
+  <div className="fixed inset-0 z-[9998] flex flex-col items-center justify-center transition-opacity duration-500"
     style={{ background: 'linear-gradient(160deg, #F9FAFB 0%, #EFF6FF 50%, #F0FDF4 100%)' }}>
     <img
       src="/logotransparent.png"
       alt="iRRIG+"
-      className="w-[88px] h-[88px] animate-[splash-pulse_2.4s_ease-in-out_infinite]"
-      style={{ filter: 'drop-shadow(0 4px 12px rgba(14, 165, 233, 0.2))' }}
+      className="w-[88px] h-[88px] animate-[splash-pulse_3s_ease-in-out_infinite]"
+      style={{ filter: 'drop-shadow(0 6px 16px rgba(14, 165, 233, 0.25))' }}
     />
     <div
       className="mt-5 text-[28px] font-bold tracking-tight"
@@ -36,14 +36,14 @@ const SplashScreen = () => (
     >
       iRRIG+
     </div>
-    <div className="flex gap-1.5 mt-8">
+    <div className="flex gap-2 mt-8">
       {[0, 1, 2].map(i => (
         <span
           key={i}
-          className="w-[7px] h-[7px] rounded-full"
+          className="w-2 h-2 rounded-full"
           style={{
             background: 'linear-gradient(135deg, #0EA5E9, #22C55E)',
-            animation: `splash-dot 1.4s ease-in-out ${i * 0.16}s infinite`,
+            animation: `splash-dot 1.8s ease-in-out ${i * 0.24}s infinite`,
           }}
         />
       ))}
@@ -61,19 +61,29 @@ const ProtectedRoute = ({ children, roles }) => {
 
 function AppRoutes() {
   const { user, loading } = useAuth();
+  const [splashVisible, setSplashVisible] = React.useState(true);
 
-  // Masquer le splash screen HTML natif dès que React a fini de charger
+  // Garantir un temps d'animation élégant et fluide (1.3s minimum) pour une transition PWA pro
   useEffect(() => {
     if (!loading) {
-      const splash = document.getElementById('splash-screen');
-      if (splash) {
-        splash.classList.add('hide');
-        setTimeout(() => splash.remove(), 500);
-      }
+      const timer = setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.classList.add('hide');
+          setTimeout(() => {
+            splash.remove();
+            setSplashVisible(false);
+          }, 600);
+        } else {
+          setSplashVisible(false);
+        }
+      }, 1100);
+
+      return () => clearTimeout(timer);
     }
   }, [loading]);
 
-  if (loading) return <SplashScreen />;
+  if (loading || splashVisible) return <SplashScreen />;
 
   return (
     <Routes>
