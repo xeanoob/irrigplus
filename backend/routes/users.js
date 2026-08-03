@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcryptjs');
 const { verifyToken, requireRole } = require('../middleware/auth');
+const logActivity = require('../helpers/logActivity');
 
 // GET all users (admin only)
 router.get('/', verifyToken, requireRole('admin'), async (req, res) => {
@@ -39,6 +40,7 @@ router.post('/', verifyToken, requireRole('admin'), async (req, res) => {
         );
 
         res.status(201).json(result.rows[0]);
+        logActivity(req.user.id, 'create', 'user', `A créé le compte « ${nom} » (${role || 'agriculteur'})`, result.rows[0].id);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ error: 'Erreur serveur.' });
@@ -59,6 +61,7 @@ router.put('/:id/role', verifyToken, requireRole('admin'), async (req, res) => {
         );
 
         if (result.rows.length === 0) return res.status(404).json({ error: 'Utilisateur non trouvé.' });
+        logActivity(req.user.id, 'update', 'user', `A changé le rôle de « ${result.rows[0].nom} » en ${role}`, parseInt(req.params.id));
         res.json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
@@ -74,7 +77,9 @@ router.put('/:id/toggle', verifyToken, requireRole('admin'), async (req, res) =>
             [req.params.id]
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'Utilisateur non trouvé.' });
-        res.json(result.rows[0]);
+        const u = result.rows[0];
+        logActivity(req.user.id, 'update', 'user', `A ${u.actif ? 'activé' : 'désactivé'} le compte « ${u.nom} »`, parseInt(req.params.id));
+        res.json(u);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ error: 'Erreur serveur.' });
@@ -88,8 +93,9 @@ router.delete('/:id', verifyToken, requireRole('admin'), async (req, res) => {
         if (parseInt(id) === req.user.id) {
             return res.status(400).json({ error: 'Vous ne pouvez pas vous supprimer vous-même.' });
         }
-        const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
+        const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING id, nom', [id]);
         if (result.rows.length === 0) return res.status(404).json({ error: 'Utilisateur non trouvé.' });
+        logActivity(req.user.id, 'delete', 'user', `A supprimé le compte « ${result.rows[0].nom} »`, parseInt(id));
         res.json({ message: 'Utilisateur supprimé.' });
     } catch (err) {
         console.error(err.message);

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { verifyToken } = require('../middleware/auth');
+const logActivity = require('../helpers/logActivity');
 
 // GET all irrigations (with server-side filtering & pagination)
 router.get('/', verifyToken, async (req, res) => {
@@ -81,10 +82,10 @@ router.post('/', verifyToken, async (req, res) => {
         let volume_total_m3 = 0;
 
         if (methode_calcul === 'dose') {
-            // Get champ surface
-            const champRes = await pool.query('SELECT surface_m2 FROM champs WHERE id = $1', [champ_id]);
-            if(champRes.rows.length > 0) {
-                const surface_m2 = parseFloat(champRes.rows[0].surface_m2);
+            // Use enrouleur surface_travail (working area), not the champ total surface
+            const enrouleurRes = await pool.query('SELECT surface_travail FROM enrouleurs WHERE id = $1', [enrouleur_id]);
+            if(enrouleurRes.rows.length > 0 && enrouleurRes.rows[0].surface_travail) {
+                const surface_m2 = parseFloat(enrouleurRes.rows[0].surface_travail);
                 const dose = parseFloat(dose_mm || 0);
                 volume_total_m3 = (surface_m2 * dose) / 1000;
             }
@@ -120,6 +121,17 @@ router.post('/', verifyToken, async (req, res) => {
         ];
         
         const result = await pool.query(query, values);
+
+        // Log activity
+        const champRes2 = await pool.query('SELECT nom_champ FROM champs WHERE id = $1', [champ_id]);
+        const champNom = champRes2.rows[0]?.nom_champ || 'Inconnu';
+        logActivity(
+            req.user.id, 'create', 'irrigation',
+            `A enregistré une irrigation sur « ${champNom} » — ${parseFloat(volume_total_m3).toLocaleString('fr-FR')} m³ (${type_culture})`,
+            result.rows[0].id,
+            { champ_id, volume_total_m3, methode_calcul, type_culture }
+        );
+
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
@@ -157,6 +169,21 @@ router.patch('/:id/statut', verifyToken, async (req, res) => {
         params.push(req.params.id);
 
         const result = await pool.query(query, params);
+
+        // Log activity
+        const irrigInfo = await pool.query(
+            `SELECT c.nom_champ, i.volume_total_m3 FROM irrigations i JOIN champs c ON i.champ_id = c.id WHERE i.id = $1`,
+            [req.params.id]
+        );
+        const info = irrigInfo.rows[0];
+        const actionLabel = statut === 'lance' ? 'A démarré' : 'A terminé';
+        logActivity(
+            req.user.id, 'status_change', 'irrigation',
+            `${actionLabel} l'irrigation sur « ${info?.nom_champ || '?'} » (${parseFloat(info?.volume_total_m3 || 0).toLocaleString('fr-FR')} m³)`,
+            parseInt(req.params.id),
+            { statut, volume_total_m3: info?.volume_total_m3 }
+        );
+
         res.json(result.rows[0]);
     } catch (err) {
         console.error(err.message);

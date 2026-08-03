@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, MapPin, Settings2, Replace, Droplets, Users, LogOut, Plus, WifiOff, CloudUpload, Activity } from 'lucide-react';
+import { LayoutDashboard, MapPin, Settings2, Replace, Droplets, Users, LogOut, Plus, WifiOff, CloudUpload, Activity, ScrollText } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useSync } from '../context/SyncContext';
 
@@ -17,6 +17,7 @@ const Layout = ({ children }) => {
         { path: '/irrigations', label: 'Irrigations', icon: Droplets, roles: ['agriculteur', 'admin'] },
         { path: '/compensations', label: 'Restitution', icon: Activity, roles: ['admin'] },
         { path: '/utilisateurs', label: 'Comptes', icon: Users, roles: ['admin'] },
+        { path: '/logs', label: 'Logs', icon: ScrollText, roles: ['admin'] },
     ];
 
     const navItems = allNavItems.filter(item => item.roles.includes(user?.role));

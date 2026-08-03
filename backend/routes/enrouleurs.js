@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { verifyToken } = require('../middleware/auth');
+const logActivity = require('../helpers/logActivity');
 
 // GET all enrouleurs
 router.get('/', verifyToken, async (req, res) => {
@@ -57,6 +58,7 @@ router.post('/', verifyToken, async (req, res) => {
             `INSERT INTO enrouleurs (nom, surface_travail, taille_buse, user_id) VALUES ($1, $2, $3, $4) RETURNING *`,
             [nom, surface_travail || null, taille_buse, req.user.id]
         );
+        logActivity(req.user.id, 'create', 'enrouleur', `A ajouté l'enrouleur « ${nom} » (buse ${taille_buse})`, result.rows[0].id);
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
@@ -78,6 +80,7 @@ router.put('/:id', verifyToken, async (req, res) => {
             `UPDATE enrouleurs SET nom = $1, surface_travail = $2, taille_buse = $3 WHERE id = $4 RETURNING *`,
             [nom, surface_travail || null, taille_buse, req.params.id]
         );
+        logActivity(req.user.id, 'update', 'enrouleur', `A modifié l'enrouleur « ${nom} » (buse ${taille_buse})`, parseInt(req.params.id));
         res.json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
@@ -93,6 +96,7 @@ router.delete('/:id', verifyToken, async (req, res) => {
         if (req.user.role === 'agriculteur' && check.rows[0].user_id !== req.user.id) return res.status(403).json({ error: 'Accès refusé.' });
 
         await pool.query('UPDATE enrouleurs SET actif = FALSE WHERE id = $1', [req.params.id]);
+        logActivity(req.user.id, 'delete', 'enrouleur', `A supprimé un enrouleur`, parseInt(req.params.id));
         res.json({ message: 'Enrouleur supprimé.' });
     } catch (err) {
         console.error(err.message);

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const logActivity = require('../helpers/logActivity');
 const { verifyToken, requireRole } = require('../middleware/auth');
 const { jsPDF } = require('jspdf');
 const { applyPlugin } = require('jspdf-autotable');
@@ -57,6 +58,13 @@ router.post('/', verifyToken, requireRole('admin'), async (req, res) => {
             RETURNING *
         `, [date_jour, volume_total_pompe_m3, volume_restitue_m3, req.user.id]);
         
+        logActivity(
+            req.user.id, 'validate', 'compensation',
+            `A validé la compensation du ${new Date(date_jour).toLocaleDateString('fr-FR')} — ${parseFloat(volume_total_pompe_m3).toLocaleString('fr-FR')} m³ pompés, ${parseFloat(volume_restitue_m3).toLocaleString('fr-FR')} m³ restitués`,
+            result.rows[0].id,
+            { date_jour, volume_total_pompe_m3, volume_restitue_m3 }
+        );
+
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err.message);

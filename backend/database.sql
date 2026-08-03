@@ -98,3 +98,19 @@ CREATE INDEX IF NOT EXISTS idx_enrouleurs_actif ON enrouleurs(actif);
 CREATE INDEX IF NOT EXISTS idx_irrigations_user ON irrigations(user_id);
 CREATE INDEX IF NOT EXISTS idx_irrigations_date ON irrigations(date_debut);
 CREATE INDEX IF NOT EXISTS idx_compensations_date ON compensations(date_jour);
+
+-- Activity Logs (Journal d'activité admin)
+CREATE TABLE IF NOT EXISTS activity_logs (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    action VARCHAR(50) NOT NULL,
+    entite VARCHAR(50),
+    entite_id INTEGER,
+    description TEXT NOT NULL,
+    metadata JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_activity_logs_created ON activity_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_user ON activity_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_action ON activity_logs(action);

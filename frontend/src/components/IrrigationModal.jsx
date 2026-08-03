@@ -32,10 +32,10 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs, pompes, enrouleurs
 
     const volumePreview = useMemo(() => {
         if (form.methode_calcul === 'dose') {
-            const champ = champs.find(c => c.id === parseInt(form.champ_id));
+            const enrouleur = enrouleurs.find(e => e.id === parseInt(form.enrouleur_id));
             const dose = parseFloat(form.dose_mm);
-            if (champ && dose > 0) {
-                return ((parseFloat(champ.surface_m2) * dose) / 1000).toFixed(2);
+            if (enrouleur && enrouleur.surface_travail && dose > 0) {
+                return ((parseFloat(enrouleur.surface_travail) * dose) / 1000).toFixed(2);
             }
         } else {
             const pompe = pompes.find(p => p.id === parseInt(form.pompe_id));
@@ -45,7 +45,7 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs, pompes, enrouleurs
             }
         }
         return null;
-    }, [form, champs, pompes]);
+    }, [form, enrouleurs, pompes]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -192,7 +192,7 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs, pompes, enrouleurs
                                 placeholder="Ex: 5"
                                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-cyan-600 outline-none"
                             />
-                            <p className="text-[10px] text-gray-400 mt-1">Formule : V(m³) = S(m²) × Dose(mm) / 1000</p>
+                            <p className="text-[10px] text-gray-400 mt-1">Formule : V(m³) = Surface enrouleur(m²) × Dose(mm) / 1000</p>
                         </div>
                     ) : (
                         <div>

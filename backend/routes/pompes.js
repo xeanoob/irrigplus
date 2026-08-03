@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { verifyToken } = require('../middleware/auth');
+const logActivity = require('../helpers/logActivity');
 
 // GET all pompes for the current user (or all if admin wants, but usually scoped to user)
 router.get('/', verifyToken, async (req, res) => {
@@ -58,6 +59,7 @@ router.post('/', verifyToken, async (req, res) => {
             `INSERT INTO pompes (nom, debit_m3_h, user_id) VALUES ($1, $2, $3) RETURNING *`,
             [nom, debit_m3_h, req.user.id]
         );
+        logActivity(req.user.id, 'create', 'pompe', `A ajouté la pompe « ${nom} » (${debit_m3_h} m³/h)`, result.rows[0].id);
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
@@ -81,6 +83,7 @@ router.put('/:id', verifyToken, async (req, res) => {
             `UPDATE pompes SET nom = $1, debit_m3_h = $2 WHERE id = $3 RETURNING *`,
             [nom, debit_m3_h, req.params.id]
         );
+        logActivity(req.user.id, 'update', 'pompe', `A modifié la pompe « ${nom} » (${debit_m3_h} m³/h)`, parseInt(req.params.id));
         res.json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
@@ -96,6 +99,7 @@ router.delete('/:id', verifyToken, async (req, res) => {
         if (req.user.role === 'agriculteur' && check.rows[0].user_id !== req.user.id) return res.status(403).json({ error: 'Accès refusé.' });
 
         await pool.query('UPDATE pompes SET actif = FALSE WHERE id = $1', [req.params.id]);
+        logActivity(req.user.id, 'delete', 'pompe', `A supprimé une pompe`, parseInt(req.params.id));
         res.json({ message: 'Pompe supprimée.' });
     } catch (err) {
         console.error(err.message);

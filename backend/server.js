@@ -69,6 +69,7 @@ const pompesRoute = require('./routes/pompes');
 const enrouleursRoute = require('./routes/enrouleurs');
 const irrigationsRoute = require('./routes/irrigations');
 const compensationsRoute = require('./routes/compensations');
+const logsRoute = require('./routes/logs');
 
 app.use('/api/auth', authRoute);
 app.use('/auth', authRoute);
@@ -93,6 +94,9 @@ app.use('/irrigations', irrigationsRoute);
 
 app.use('/api/compensations', compensationsRoute);
 app.use('/compensations', compensationsRoute);
+
+app.use('/api/logs', logsRoute);
+app.use('/logs', logsRoute);
 
 app.get('/', (req, res) => {
     res.json({ status: 'iRRIG+ API is running' });

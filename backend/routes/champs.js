@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { verifyToken } = require('../middleware/auth');
+const logActivity = require('../helpers/logActivity');
 
 // GET all champs
 router.get('/', verifyToken, async (req, res) => {
@@ -58,6 +59,7 @@ router.post('/', verifyToken, async (req, res) => {
             `INSERT INTO champs (nom_champ, surface_m2, user_id) VALUES ($1, $2, $3) RETURNING *`,
             [nom_champ, surface_m2, req.user.id]
         );
+        logActivity(req.user.id, 'create', 'champ', `A ajouté le champ « ${nom_champ} » (${surface_m2} m²)`, result.rows[0].id);
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
@@ -79,6 +81,7 @@ router.put('/:id', verifyToken, async (req, res) => {
             `UPDATE champs SET nom_champ = $1, surface_m2 = $2 WHERE id = $3 RETURNING *`,
             [nom_champ, surface_m2, req.params.id]
         );
+        logActivity(req.user.id, 'update', 'champ', `A modifié le champ « ${nom_champ} » (${surface_m2} m²)`, parseInt(req.params.id));
         res.json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
@@ -94,6 +97,7 @@ router.delete('/:id', verifyToken, async (req, res) => {
         if (req.user.role === 'agriculteur' && check.rows[0].user_id !== req.user.id) return res.status(403).json({ error: 'Accès refusé.' });
 
         await pool.query('UPDATE champs SET actif = FALSE WHERE id = $1', [req.params.id]);
+        logActivity(req.user.id, 'delete', 'champ', `A supprimé un champ`, parseInt(req.params.id));
         res.json({ message: 'Champ supprimé.' });
     } catch (err) {
         console.error(err.message);

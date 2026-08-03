@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { z } = require('zod');
 const { JWT_SECRET, verifyToken } = require('../middleware/auth');
+const logActivity = require('../helpers/logActivity');
 
 
 const registerSchema = z.object({
@@ -75,6 +76,7 @@ router.post('/login', async (req, res) => {
             { expiresIn: '24h' }
         );
         res.json({ token, user: { id: user.id, nom: user.nom, email: user.email, role: user.role } });
+        logActivity(user.id, 'login', 'auth', `S'est connecté (${user.role})`);
     } catch (err) {
         if (err instanceof z.ZodError) {
             return res.status(400).json({ error: err.errors[0].message });
