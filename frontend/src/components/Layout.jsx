@@ -11,9 +11,9 @@ const Layout = ({ children }) => {
 
     const allNavItems = [
         { path: '/', label: 'Dashboard', icon: LayoutDashboard, roles: ['agriculteur', 'admin'] },
-        { path: '/champs', label: 'Champs', icon: MapPin, roles: ['agriculteur'] },
-        { path: '/pompes', label: 'Pompes', icon: Settings2, roles: ['agriculteur'] },
-        { path: '/enrouleurs', label: 'Enrouleurs', icon: Replace, roles: ['agriculteur'] },
+        { path: '/champs', label: 'Champs', icon: MapPin, roles: ['agriculteur', 'admin'] },
+        { path: '/pompes', label: 'Pompes', icon: Settings2, roles: ['agriculteur', 'admin'] },
+        { path: '/enrouleurs', label: 'Enrouleurs', icon: Replace, roles: ['agriculteur', 'admin'] },
         { path: '/irrigations', label: 'Irrigations', icon: Droplets, roles: ['agriculteur', 'admin'] },
         { path: '/compensations', label: 'Restitution', icon: Activity, roles: ['admin'] },
         { path: '/utilisateurs', label: 'Comptes', icon: Users, roles: ['admin'] },

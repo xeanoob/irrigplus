@@ -32,10 +32,10 @@ function AppRoutes() {
 
       <Route path="/" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
       
-      {/* Agriculteur Routes */}
-      <Route path="/champs" element={<ProtectedRoute roles={['agriculteur']}><Layout><Champs /></Layout></ProtectedRoute>} />
-      <Route path="/pompes" element={<ProtectedRoute roles={['agriculteur']}><Layout><Pompes /></Layout></ProtectedRoute>} />
-      <Route path="/enrouleurs" element={<ProtectedRoute roles={['agriculteur']}><Layout><Enrouleurs /></Layout></ProtectedRoute>} />
+      {/* Configuration & Matériel Routes */}
+      <Route path="/champs" element={<ProtectedRoute roles={['agriculteur', 'admin']}><Layout><Champs /></Layout></ProtectedRoute>} />
+      <Route path="/pompes" element={<ProtectedRoute roles={['agriculteur', 'admin']}><Layout><Pompes /></Layout></ProtectedRoute>} />
+      <Route path="/enrouleurs" element={<ProtectedRoute roles={['agriculteur', 'admin']}><Layout><Enrouleurs /></Layout></ProtectedRoute>} />
       
       {/* Shared Route */}
       <Route path="/irrigations" element={<ProtectedRoute><Layout><Irrigations /></Layout></ProtectedRoute>} />
