@@ -58,19 +58,41 @@ const loginLimiter = rateLimit({
     message: { error: 'Trop de tentatives de connexion, veuillez patienter 15 minutes.' }
 });
 app.use('/api/auth/login', loginLimiter);
-
+app.use('/auth/login', loginLimiter);
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/dashboard', require('./routes/dashboard'));
-app.use('/api/parcelles', (req,res) => res.status(404).send('Deprecated'));
-app.use('/api/materiel', (req,res) => res.status(404).send('Deprecated'));
-app.use('/api/champs', require('./routes/champs'));
-app.use('/api/pompes', require('./routes/pompes'));
-app.use('/api/enrouleurs', require('./routes/enrouleurs'));
-app.use('/api/irrigations', require('./routes/irrigations'));
-app.use('/api/compensations', require('./routes/compensations'));
+const authRoute = require('./routes/auth');
+const usersRoute = require('./routes/users');
+const dashboardRoute = require('./routes/dashboard');
+const champsRoute = require('./routes/champs');
+const pompesRoute = require('./routes/pompes');
+const enrouleursRoute = require('./routes/enrouleurs');
+const irrigationsRoute = require('./routes/irrigations');
+const compensationsRoute = require('./routes/compensations');
+
+app.use('/api/auth', authRoute);
+app.use('/auth', authRoute);
+
+app.use('/api/users', usersRoute);
+app.use('/users', usersRoute);
+
+app.use('/api/dashboard', dashboardRoute);
+app.use('/dashboard', dashboardRoute);
+
+app.use('/api/champs', champsRoute);
+app.use('/champs', champsRoute);
+
+app.use('/api/pompes', pompesRoute);
+app.use('/pompes', pompesRoute);
+
+app.use('/api/enrouleurs', enrouleursRoute);
+app.use('/enrouleurs', enrouleursRoute);
+
+app.use('/api/irrigations', irrigationsRoute);
+app.use('/irrigations', irrigationsRoute);
+
+app.use('/api/compensations', compensationsRoute);
+app.use('/compensations', compensationsRoute);
 
 app.get('/', (req, res) => {
     res.json({ status: 'iRRIG+ API is running' });
