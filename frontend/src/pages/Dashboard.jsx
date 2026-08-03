@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Droplets, MapPin, Wrench, Calendar, BarChart2, Activity, Users } from 'lucide-react';
+import { MapPin, Wrench, BarChart2, Activity, Users } from 'lucide-react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -200,58 +200,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Lists in 2 columns */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* Top parcelles */}
-                {stats.top_champs && stats.top_champs.length > 0 && stats.top_champs.some(p => p.total_volume_m3 > 0) && (
-                <div className="pro-card overflow-hidden">
-                    <div className="px-4 py-3 bg-cyan-50 border-b border-cyan-100 flex items-center gap-2">
-                        <Droplets className="w-4 h-4 text-cyan-600" />
-                        <span className="text-[10px] font-bold text-cyan-700 uppercase tracking-widest">Top champs par consommation</span>
-                    </div>
-                    <div className="divide-y divide-gray-100">
-                        {stats.top_champs.filter(p => p.total_volume_m3 > 0).map(p => (
-                            <div key={p.id} className="px-4 py-3 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors">
-                                <div className="min-w-0 flex-1 mr-4">
-                                    <p className="text-sm font-bold text-gray-900 truncate">{p.nom}</p>
-                                    <p className="text-[10px] text-gray-400 uppercase font-medium">{parseFloat(p.surface_m2).toLocaleString('fr-FR')} m²</p>
-                                </div>
-                                <div className="text-right shrink-0">
-                                    <p className="text-sm font-black text-cyan-700 leading-tight tabular-nums">{p.total_volume_m3.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} m³</p>
-                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">{p.nb_sessions} session{p.nb_sessions > 1 ? 's' : ''}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
 
-            {/* Recent irrigations */}
-            {stats.recent && stats.recent.length > 0 && (
-                <div className="pro-card overflow-hidden">
-                    <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-gray-500" />
-                        <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Sessions récentes</span>
-                    </div>
-                    <div className="divide-y divide-gray-50">
-                        {stats.recent.map(r => (
-                            <div key={r.id} className="px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                                <div className="min-w-0 flex-1 mr-4">
-                                    <p className="text-sm font-semibold text-gray-900">{r.champ}</p>
-                                    <p className="text-[10px] text-gray-400">{r.pompe} · {new Date(r.date).toLocaleDateString('fr-FR')}</p>
-                                </div>
-                                <div className="text-right shrink-0">
-                                    <p className="text-sm font-bold text-gray-900 tabular-nums">{r.volume_m3.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} m³</p>
-                                    <span className={`text-[9px] font-bold uppercase ${r.methode === 'dose' ? 'text-blue-600' : 'text-amber-600'}`}>
-                                        {r.methode}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-            </div>
 
             {/* Per-farmer breakdown (admin only) */}
             {stats.par_agriculteur && stats.par_agriculteur.length > 0 && (
