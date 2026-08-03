@@ -35,47 +35,47 @@ const Login = () => {
                     <p className="text-sm text-gray-400 mt-1">Gestion d'irrigation agricole</p>
                 </div>
 
-                <div className="bg-white border border-gray-200 shadow-sm rounded-md p-6">
+                <div className="bg-white border border-gray-100 shadow-xl rounded-2xl p-6 sm:p-7 backdrop-blur-xs">
                     {error && (
-                        <div className="mb-4 px-3 py-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-md">
+                        <div className="mb-4 px-3.5 py-2.5 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl animate-in fade-in">
                             {error}
                         </div>
                     )}
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Email</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Email</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={e => setEmail(e.target.value)}
                                 required
                                 autoFocus
-                                placeholder="admin@irrigplus.local"
-                                className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-cyan-600 focus:border-cyan-600"
+                                placeholder="votre@email.fr"
+                                className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-cyan-600 transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Mot de passe</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Mot de passe</label>
                             <input
                                 type="password"
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
                                 required
                                 placeholder="••••••••"
-                                className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-cyan-600 focus:border-cyan-600"
+                                className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-cyan-600 transition-all"
                             />
                         </div>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-gray-900 text-white px-4 py-2.5 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-4 py-3 rounded-lg text-sm font-bold hover:from-cyan-700 hover:to-blue-700 active:scale-95 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {loading ? 'Connexion...' : 'Se connecter'}
+                            {loading ? 'Connexion en cours...' : 'Se connecter'}
                         </button>
                     </form>
                 </div>
-                <p className="text-center text-xs text-gray-500 mt-6">
-                    Défaut : admin@irrigplus.local / admin123
+                <p className="text-center text-xs text-gray-500 mt-6 font-medium">
+                    iRRIG+ • Plateforme de gestion d'irrigation
                 </p>
             </div>
         </div>

@@ -195,30 +195,45 @@ const Compensations = () => {
             </div>
 
             {/* Saisie Journalière */}
-            <div className="pro-card p-5 bg-blue-50/30 border-blue-100">
-                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="pro-card p-4 sm:p-5 bg-blue-50/30 border-blue-100">
+                <h3 className="font-bold text-gray-900 mb-3.5 flex items-center gap-2 text-sm sm:text-base">
                     <Activity className="w-5 h-5 text-blue-600" /> Saisie Journalière
                 </h3>
-                <form onSubmit={handleSave} className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                <form onSubmit={handleSave} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 items-end">
                     <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Date</label>
-                        <input type="date" value={dateJour} onChange={e => setDateJour(e.target.value)} required
-                            className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-600" />
+                        <label className="block text-xs font-semibold text-gray-700 mb-1.5">Date</label>
+                        <input
+                            type="date"
+                            value={dateJour}
+                            onChange={e => setDateJour(e.target.value)}
+                            required
+                            className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-blue-600 outline-none transition-all"
+                        />
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Total Pompé (m³)</label>
-                        <div className="w-full bg-gray-100 border border-gray-200 rounded-md px-3 py-2 text-sm font-bold text-gray-900">
+                        <label className="block text-xs font-semibold text-gray-700 mb-1.5">Total Pompé (m³)</label>
+                        <div className="w-full bg-gray-100/90 border border-gray-200 rounded-lg px-3.5 py-2.5 text-base sm:text-sm font-bold text-gray-900 flex items-center">
                             {calculJour !== null ? parseFloat(calculJour).toLocaleString('fr-FR') : '-'} m³
                         </div>
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Volume à Restituer (m³)</label>
-                        <input type="number" step="0.1" value={volumeRestitue} onChange={e => setVolumeRestitue(e.target.value)} required
-                            className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-600" />
+                        <label className="block text-xs font-semibold text-gray-700 mb-1.5">Volume à Restituer (m³)</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            value={volumeRestitue}
+                            onChange={e => setVolumeRestitue(e.target.value)}
+                            required
+                            placeholder="ex: 1200"
+                            className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-blue-600 outline-none transition-all"
+                        />
                     </div>
                     <div>
-                        <button type="submit" className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium flex justify-center items-center transition-colors">
-                            <Save className="w-4 h-4 mr-2" /> Valider
+                        <button
+                            type="submit"
+                            className="w-full bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 active:scale-95 text-sm font-semibold flex justify-center items-center gap-2 transition-all shadow-xs"
+                        >
+                            <Save className="w-4 h-4" /> Valider
                         </button>
                     </div>
                 </form>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, UserCheck, UserX, Shield, Trash2, Pencil } from 'lucide-react';
+import { Plus, UserCheck, UserX, Shield, Trash2, Pencil, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
@@ -138,35 +138,69 @@ const Utilisateurs = () => {
             </div>
 
             {/* Formulaire de création */}
+            {/* Formulaire de création */}
             {showForm && (
-                <div className="pro-card p-5">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-4">Créer un compte</h3>
-                    <form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="pro-card p-4 sm:p-5 border border-gray-200 bg-white/95 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+                    <h3 className="text-sm font-bold text-gray-900 mb-3.5 flex items-center gap-2">
+                        <Plus className="w-4 h-4 text-gray-900" /> Créer un compte
+                    </h3>
+                    <form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Nom complet *</label>
-                            <input value={form.nom} onChange={e => setForm({ ...form, nom: e.target.value })} required placeholder="Jean Dupont"
-                                className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900" />
+                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Nom complet *</label>
+                            <input
+                                value={form.nom}
+                                onChange={e => setForm({ ...form, nom: e.target.value })}
+                                required
+                                placeholder="Jean Dupont"
+                                className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-gray-900 outline-none transition-all"
+                            />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Email *</label>
-                            <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required placeholder="jean@erp.local"
-                                className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900" />
+                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Email *</label>
+                            <input
+                                type="email"
+                                value={form.email}
+                                onChange={e => setForm({ ...form, email: e.target.value })}
+                                required
+                                placeholder="jean@irrigplus.fr"
+                                className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-gray-900 outline-none transition-all"
+                            />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Mot de passe *</label>
-                            <input type="password" value={form.mot_de_passe} onChange={e => setForm({ ...form, mot_de_passe: e.target.value })} required placeholder="••••••••"
-                                className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900" />
+                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Mot de passe *</label>
+                            <input
+                                type="password"
+                                value={form.mot_de_passe}
+                                onChange={e => setForm({ ...form, mot_de_passe: e.target.value })}
+                                required
+                                placeholder="••••••••"
+                                className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-gray-900 outline-none transition-all"
+                            />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Rôle</label>
-                            <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}
-                                className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900">
+                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Rôle</label>
+                            <select
+                                value={form.role}
+                                onChange={e => setForm({ ...form, role: e.target.value })}
+                                className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-gray-900 outline-none transition-all"
+                            >
                                 {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                             </select>
                         </div>
-                        <div className="sm:col-span-2 flex gap-2 pt-2">
-                            <button type="submit" className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800">Créer le compte</button>
-                            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Annuler</button>
+                        <div className="sm:col-span-2 flex gap-2.5 pt-1">
+                            <button
+                                type="submit"
+                                className="bg-gray-900 text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-800 active:scale-95 transition-all shadow-xs"
+                            >
+                                Créer le compte
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setShowForm(false)}
+                                className="px-4 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:scale-95 transition-all"
+                            >
+                                Annuler
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -321,25 +355,48 @@ const Utilisateurs = () => {
 
             {/* Modal de modification mobile */}
             {showEditModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[100] animate-in fade-in duration-200">
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-[100] animate-in fade-in duration-200">
                     <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-                        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                            <h3 className="text-sm font-black text-gray-900 uppercase tracking-tight">Modifier Profil</h3>
+                        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+                            <h3 className="text-sm font-bold text-gray-900">Modifier l'utilisateur</h3>
+                            <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600 p-1 rounded-lg">
+                                <X className="w-4 h-4" />
+                            </button>
                         </div>
-                        <form onSubmit={handleSaveEdit} className="p-6 space-y-4">
+                        <form onSubmit={handleSaveEdit} className="p-5 sm:p-6 space-y-4">
                             <div>
-                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Nom Complet</label>
-                                <input value={editForm.nom} onChange={e => setEditForm({ ...editForm, nom: e.target.value })} required
-                                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-gray-900 outline-none" />
+                                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Nom complet</label>
+                                <input
+                                    value={editForm.nom}
+                                    onChange={e => setEditForm({ ...editForm, nom: e.target.value })}
+                                    required
+                                    className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-gray-900 outline-none transition-all"
+                                />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Email</label>
-                                <input type="email" value={editForm.email} onChange={e => setEditForm({ ...editForm, email: e.target.value })} required
-                                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-gray-900 outline-none" />
+                                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Email</label>
+                                <input
+                                    type="email"
+                                    value={editForm.email}
+                                    onChange={e => setEditForm({ ...editForm, email: e.target.value })}
+                                    required
+                                    className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-gray-900 outline-none transition-all"
+                                />
                             </div>
-                            <div className="flex gap-3 pt-2">
-                                <button type="submit" className="flex-1 bg-gray-900 text-white py-2.5 rounded-lg text-xs font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all">Enregistrer</button>
-                                <button type="button" onClick={() => setShowEditModal(false)} className="flex-1 bg-white border border-gray-200 text-gray-400 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-gray-50 active:scale-95 transition-all">Annuler</button>
+                            <div className="flex gap-2.5 pt-2">
+                                <button
+                                    type="submit"
+                                    className="flex-1 bg-gray-900 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-800 active:scale-95 transition-all shadow-xs"
+                                >
+                                    Enregistrer
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowEditModal(false)}
+                                    className="flex-1 bg-white border border-gray-300 text-gray-700 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-50 active:scale-95 transition-all"
+                                >
+                                    Annuler
+                                </button>
                             </div>
                         </form>
                     </div>

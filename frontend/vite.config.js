@@ -57,5 +57,17 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-chart': ['chart.js', 'react-chartjs-2'],
+          'vendor-pdf': ['jspdf', 'jspdf-autotable'],
+        }
+      }
+    }
   }
 })

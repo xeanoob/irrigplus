@@ -53,16 +53,15 @@ button {
 
 @layer utilities {
   .pro-card {
-    @apply bg-white border border-gray-200 shadow-sm rounded-md;
+    @apply bg-white border border-gray-200/80 shadow-xs rounded-xl;
   }
 
-  
   .pb-safe-nav {
     padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
   }
 
   .bottom-nav {
-    @apply fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex items-center justify-around z-40 lg:hidden;
+    @apply fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 flex items-center justify-around z-40 lg:hidden;
     height: calc(4rem + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -81,10 +80,24 @@ button {
   }
 
   .mobile-card-grid {
-    @apply grid grid-cols-1 gap-3 sm:hidden px-1;
+    @apply grid grid-cols-1 gap-3 sm:hidden px-0.5;
   }
 
   .desktop-table-container {
-    @apply hidden sm:block bg-white border border-gray-200 shadow-sm rounded-md overflow-hidden;
+    @apply hidden sm:block bg-white border border-gray-200/80 shadow-xs rounded-xl overflow-hidden;
+  }
+}
+
+/* Mobile input sizing to prevent iOS Safari auto-zoom (< 16px triggers zoom) */
+@media (max-width: 640px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="date"],
+  input[type="datetime-local"],
+  select,
+  textarea {
+    font-size: 16px !important;
   }
 }

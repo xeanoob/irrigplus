@@ -180,21 +180,34 @@ const Irrigations = () => {
                 </div>
             </div>
 
-            <div className="pro-card p-3 sm:p-4">
+            <div className="pro-card p-3.5 sm:p-4">
                 <div className="flex items-center gap-2 mb-3">
                     <Filter className="w-4 h-4 text-gray-400" />
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Filtres</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <select value={filterChamp} onChange={e => setFilterChamp(e.target.value)}
-                        className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-gray-900 outline-none">
+                    <select
+                        value={filterChamp}
+                        onChange={e => setFilterChamp(e.target.value)}
+                        className="bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-gray-900 outline-none transition-all"
+                    >
                         <option value="">Tous les champs</option>
                         {champs.map(c => <option key={c.id} value={c.id}>{c.nom_champ}</option>)}
                     </select>
-                    <input type="date" value={filterDateDebut} onChange={e => setFilterDateDebut(e.target.value)} placeholder="Date début"
-                        className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-gray-900 outline-none" />
-                    <input type="date" value={filterDateFin} onChange={e => setFilterDateFin(e.target.value)} placeholder="Date fin"
-                        className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-gray-900 outline-none" />
+                    <input
+                        type="date"
+                        value={filterDateDebut}
+                        onChange={e => setFilterDateDebut(e.target.value)}
+                        placeholder="Date début"
+                        className="bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-gray-900 outline-none transition-all"
+                    />
+                    <input
+                        type="date"
+                        value={filterDateFin}
+                        onChange={e => setFilterDateFin(e.target.value)}
+                        placeholder="Date fin"
+                        className="bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-gray-900 outline-none transition-all"
+                    />
                 </div>
             </div>
 
