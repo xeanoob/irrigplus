@@ -75,7 +75,7 @@ const Login = () => {
                     </form>
                 </div>
                 <p className="text-center text-xs text-gray-500 mt-6">
-                    Défaut : admin@irrigplus.local / password123
+                    Défaut : admin@irrigplus.local / admin123
                 </p>
             </div>
         </div>
