@@ -29,8 +29,8 @@ const Login = () => {
     return (
         <div className="fixed inset-0 bg-[#0A0A0A] flex items-center justify-center p-4 overflow-auto">
             <div className="w-full max-w-sm">
-                <div className="mb-10 text-center flex flex-col items-center">
-                    <img src="/logotransparent.png" alt="Logo iRRIG+" className="h-16 w-auto object-contain mb-3" />
+                <div className="mb-8 text-center flex flex-col items-center">
+                    <img src="/logotransparent.png" alt="Logo iRRIG+" className="h-20 w-auto object-contain mb-3 drop-shadow" />
                     <h1 className="text-xl font-bold text-white uppercase tracking-widest">iRRIG+</h1>
                     <p className="text-sm text-gray-400 mt-1">Gestion d'irrigation agricole</p>
                 </div>
@@ -74,8 +74,8 @@ const Login = () => {
                         </button>
                     </form>
                 </div>
-                <p className="text-center text-xs text-gray-600 mt-6">
-                    Défaut : admin@irrigplus.local / admin123
+                <p className="text-center text-xs text-gray-500 mt-6">
+                    Défaut : admin@irrigplus.local / password123
                 </p>
             </div>
         </div>

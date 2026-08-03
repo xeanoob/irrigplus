@@ -23,10 +23,13 @@ const Layout = ({ children }) => {
 
     const NavContent = () => (
         <>
-            <div className="px-5 py-6 border-b border-gray-800">
-                <div className="flex items-center gap-2">
-                    <img src="/logotransparent.png" alt="iRRIG+" className="h-6 w-auto object-contain" />
-                    <h1 className="text-sm font-bold tracking-widest text-gray-400 uppercase">iRRIG+</h1>
+            <div className="px-5 py-5 border-b border-gray-800">
+                <div className="flex items-center gap-3">
+                    <img src="/logotransparent.png" alt="iRRIG+" className="h-8 w-auto object-contain" />
+                    <div className="flex flex-col">
+                        <span className="text-sm font-bold tracking-widest text-white uppercase leading-none">iRRIG+</span>
+                        <span className="text-[10px] text-gray-500 font-medium tracking-wider uppercase mt-1">Irrigation</span>
+                    </div>
                 </div>
             </div>
             <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
