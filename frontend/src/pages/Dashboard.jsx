@@ -118,19 +118,19 @@ const Dashboard = () => {
 
     return (
         <div className="max-w-6xl mx-auto flex flex-col gap-4 sm:gap-6">
-            <div className="flex justify-between items-center bg-white p-3 sm:p-4 rounded-md shadow-sm border border-gray-100">
-                <h2 className="text-lg font-bold text-gray-900">Tableau de Bord {user?.role === 'admin' && '(Vue Globale)'}</h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3 sm:p-4 rounded-md shadow-sm border border-gray-100">
+                <h2 className="text-base sm:text-lg font-bold text-gray-900">Tableau de Bord {user?.role === 'admin' && <span className="text-xs font-normal text-purple-600 ml-1">(Vue Globale)</span>}</h2>
                 <select 
                     value={range} 
                     onChange={e => setRange(e.target.value)}
-                    className="bg-gray-50 border border-gray-200 text-gray-900 text-sm font-medium rounded-md focus:ring-gray-900 focus:border-gray-900 block p-2 cursor-pointer"
+                    className="w-full sm:w-auto bg-gray-50 border border-gray-200 text-gray-900 text-xs sm:text-sm font-medium rounded-md focus:ring-gray-900 focus:border-gray-900 block p-2 cursor-pointer"
                 >
                     {ranges.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                 </select>
             </div>
 
             {/* KPIs */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
                 <div className="pro-card p-3 sm:p-5 border-blue-50 bg-blue-50/20">
                     <p className="text-[10px] sm:text-xs font-bold text-blue-500 uppercase tracking-widest mb-1 sm:mb-2 line-clamp-1">Aujourd'hui</p>
                     <p className="text-base sm:text-2xl font-bold text-gray-900 truncate tabular-nums">{stats.today.volume_m3.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-gray-400">m³</span></p>
@@ -147,7 +147,7 @@ const Dashboard = () => {
                     <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 sm:mb-2 line-clamp-1">Champs irrigués</p>
                     <p className="text-base sm:text-2xl font-bold text-gray-900 truncate tabular-nums">{stats.period.champs_irrigues}</p>
                 </div>
-                <div className="pro-card p-3 sm:p-5">
+                <div className="pro-card p-3 sm:p-5 col-span-2 sm:col-span-1">
                     <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 sm:mb-2 line-clamp-1">Vol. moyen / session</p>
                     <p className="text-base sm:text-2xl font-bold text-gray-900 truncate tabular-nums">
                         {stats.period.total_sessions > 0
@@ -159,32 +159,32 @@ const Dashboard = () => {
             </div>
 
             {/* Resource counts */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                <div className="pro-card p-4 flex items-center gap-3">
-                    <div className="p-2 bg-gray-50 rounded-lg">
-                        <MapPin className="w-5 h-5 text-gray-400" />
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                <div className="pro-card p-2.5 sm:p-4 flex items-center gap-2 sm:gap-3">
+                    <div className="p-1.5 sm:p-2 bg-gray-50 rounded-lg shrink-0">
+                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                     </div>
-                    <div>
-                        <p className="text-lg font-bold text-gray-900 leading-tight">{stats.counts?.champs ?? '-'}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Champs</p>
-                    </div>
-                </div>
-                <div className="pro-card p-4 flex items-center gap-3">
-                    <div className="p-2 bg-gray-50 rounded-lg">
-                        <Activity className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <div>
-                        <p className="text-lg font-bold text-gray-900 leading-tight">{stats.counts?.pompes ?? '-'}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Pompes</p>
+                    <div className="min-w-0">
+                        <p className="text-base sm:text-lg font-bold text-gray-900 leading-tight">{stats.counts?.champs ?? '-'}</p>
+                        <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-tight truncate">Champs</p>
                     </div>
                 </div>
-                <div className="pro-card p-4 flex items-center gap-3">
-                    <div className="p-2 bg-gray-50 rounded-lg">
-                        <Wrench className="w-5 h-5 text-gray-400" />
+                <div className="pro-card p-2.5 sm:p-4 flex items-center gap-2 sm:gap-3">
+                    <div className="p-1.5 sm:p-2 bg-gray-50 rounded-lg shrink-0">
+                        <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                     </div>
-                    <div>
-                        <p className="text-lg font-bold text-gray-900 leading-tight">{stats.counts?.enrouleurs ?? '-'}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Enrouleurs</p>
+                    <div className="min-w-0">
+                        <p className="text-base sm:text-lg font-bold text-gray-900 leading-tight">{stats.counts?.pompes ?? '-'}</p>
+                        <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-tight truncate">Pompes</p>
+                    </div>
+                </div>
+                <div className="pro-card p-2.5 sm:p-4 flex items-center gap-2 sm:gap-3">
+                    <div className="p-1.5 sm:p-2 bg-gray-50 rounded-lg shrink-0">
+                        <Wrench className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-base sm:text-lg font-bold text-gray-900 leading-tight">{stats.counts?.enrouleurs ?? '-'}</p>
+                        <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-tight truncate">Enrouleurs</p>
                     </div>
                 </div>
             </div>

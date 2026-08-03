@@ -51,14 +51,14 @@ const Enrouleurs = () => {
     };
 
     return (
-        <div className="max-w-5xl mx-auto flex flex-col gap-6">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Mes Enrouleurs</h2>
-                    <p className="text-sm text-gray-500">Gérez vos enrouleurs et buses.</p>
+        <div className="max-w-5xl mx-auto flex flex-col gap-4 sm:gap-6">
+            <div className="flex justify-between items-center gap-2 bg-white p-3 sm:p-4 rounded-md shadow-sm border border-gray-100">
+                <div className="min-w-0">
+                    <h2 className="text-base sm:text-lg font-bold text-gray-900 truncate">Mes Enrouleurs</h2>
+                    <p className="text-xs text-gray-500 hidden sm:block">Gérez vos enrouleurs et buses.</p>
                 </div>
-                <button onClick={() => setShowForm(!showForm)} className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 text-sm font-medium flex items-center">
-                    <Plus className="w-4 h-4 mr-2" /> Nouveau
+                <button onClick={() => setShowForm(!showForm)} className="bg-cyan-600 text-white px-3 sm:px-4 py-2 rounded-md hover:bg-cyan-700 text-xs sm:text-sm font-medium flex items-center shrink-0 transition-colors">
+                    <Plus className="w-4 h-4 mr-1.5" /> Nouvel enrouleur
                 </button>
             </div>
 

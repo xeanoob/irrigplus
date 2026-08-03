@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, MapPin, Settings2, Replace, Droplets, Users, LogOut, Plus, WifiOff, CloudUpload, Activity, ScrollText } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -9,6 +9,7 @@ const Layout = ({ children }) => {
     const { user, logout } = useAuth();
     const { isOnline, pendingCount, syncPendingIrrigations } = useSync();
 
+    // All nav items for sidebar (desktop)
     const allNavItems = [
         { path: '/', label: 'Dashboard', icon: LayoutDashboard, roles: ['agriculteur', 'admin'] },
         { path: '/champs', label: 'Champs', icon: MapPin, roles: ['agriculteur', 'admin'] },
@@ -20,7 +21,23 @@ const Layout = ({ children }) => {
         { path: '/logs', label: 'Logs', icon: ScrollText, roles: ['admin'] },
     ];
 
-    const navItems = allNavItems.filter(item => item.roles.includes(user?.role));
+    const sidebarItems = allNavItems.filter(item => item.roles.includes(user?.role));
+
+    // Mobile bottom nav: limited items only (4 tabs + FAB center)
+    const mobileNavLeft = [
+        { path: '/', label: 'Accueil', icon: LayoutDashboard },
+        { path: '/irrigations', label: 'Irrigations', icon: Droplets },
+    ];
+
+    const mobileNavRight = user?.role === 'admin'
+        ? [
+            { path: '/compensations', label: 'Restitution', icon: Activity },
+            { path: '/utilisateurs', label: 'Comptes', icon: Users },
+        ]
+        : [
+            { path: '/champs', label: 'Champs', icon: MapPin },
+            { path: '/enrouleurs', label: 'Matériel', icon: Replace },
+        ];
 
     const NavContent = () => (
         <>
@@ -34,7 +51,7 @@ const Layout = ({ children }) => {
                 </div>
             </div>
             <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-                {navItems.map(item => {
+                {sidebarItems.map(item => {
                     const Icon = item.icon;
                     const active = location.pathname === item.path;
                     return (
@@ -61,22 +78,32 @@ const Layout = ({ children }) => {
         </>
     );
 
+    const MobileTab = ({ item }) => {
+        const Icon = item.icon;
+        const active = location.pathname === item.path;
+        return (
+            <Link to={item.path} className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 transition-colors ${active ? 'text-cyan-600' : 'text-gray-400'}`}>
+                <Icon className={`w-5 h-5 ${active ? 'stroke-[2.5]' : ''}`} />
+                <span className={`text-[9px] font-semibold leading-none ${active ? 'text-cyan-600' : 'text-gray-400'}`}>{item.label}</span>
+            </Link>
+        );
+    };
+
     return (
         <div className="flex h-screen bg-[#F9FAFB] font-sans selection:bg-gray-200">
             <aside className="hidden lg:flex flex-col w-56 bg-[#111111] shrink-0">
                 <NavContent />
             </aside>
 
-
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 shrink-0 sticky top-0 z-30">
-                    <div className="flex items-center gap-3 min-w-0">
-                        <img src="/logotransparent.png" alt="Logo" className="h-7 w-auto object-contain hidden sm:block mr-2" />
+                <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-3.5 sm:px-4 lg:px-8 shrink-0 sticky top-0 z-30">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <img src="/logotransparent.png" alt="Logo" className="h-6 sm:h-7 w-auto object-contain mr-1" />
                         <h2 className="text-sm font-semibold text-gray-800 capitalize truncate">
-                            {navItems.find(n => n.path === location.pathname)?.label || 'iRRIG+'}
+                            {sidebarItems.find(n => n.path === location.pathname)?.label || 'iRRIG+'}
                         </h2>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4">
                         {!isOnline && (
                             <div className="flex items-center gap-1.5 px-2 py-1 bg-red-50 text-red-600 rounded-md border border-red-100" title="Hors-ligne">
                                 <WifiOff className="w-4 h-4" />
@@ -89,43 +116,49 @@ const Layout = ({ children }) => {
                                 <span className="text-[10px] font-bold">{pendingCount}</span>
                             </button>
                         )}
-                        <div className="hidden sm:flex items-center gap-2 text-xs text-gray-400">
-                            <span className="font-medium text-gray-600">{user?.nom}</span>
-                            <span className="text-gray-300">·</span>
-                            <span className="capitalize">{user?.role}</span>
+                        <div className="flex items-center gap-2 text-xs text-gray-400">
+                            <span className="font-medium text-gray-600 hidden sm:inline">{user?.nom}</span>
+                            <span className="text-gray-300 hidden sm:inline">·</span>
+                            <span className="capitalize px-1.5 py-0.5 bg-gray-100 rounded text-[10px] font-semibold text-gray-600 sm:bg-transparent sm:p-0 sm:text-xs">{user?.role}</span>
                         </div>
                     </div>
                 </header>
-                <main className={`flex-1 overflow-y-auto p-4 lg:p-8 pb-safe-nav lg:pb-8`}>
+                <main className={`flex-1 overflow-y-auto p-3 sm:p-4 lg:p-8 pb-safe-nav lg:pb-8`}>
                     {children}
                 </main>
             </div>
 
-            <nav className="bottom-nav pb-safe-nav lg:hidden flex justify-around items-center relative bg-white border-t border-gray-200">
-                {navItems.map((item, index) => {
-                    const Icon = item.icon;
-                    const active = location.pathname === item.path && !location.search.includes('new=true');
-                    const middleIndex = Math.floor(navItems.length / 2);
+            {/* Mobile Bottom Nav */}
+            <nav className="bottom-nav lg:hidden">
+                {/* Left tabs */}
+                {mobileNavLeft.map(item => (
+                    <MobileTab key={item.path} item={item} />
+                ))}
 
-                    return (
-                        <React.Fragment key={item.path}>
-                            {index === middleIndex && user?.role === 'agriculteur' && (
-                                <div className="flex justify-center -mt-6">
-                                    <Link to="/irrigations?new=true" className="bg-cyan-600 text-white p-3 rounded-full shadow-lg border-[4px] border-[#F9FAFB] hover:bg-cyan-700 transition-colors z-10">
-                                        <Plus className="w-6 h-6" />
-                                    </Link>
-                                </div>
-                            )}
-                            <Link to={item.path} className={`flex-1 py-3 flex flex-col items-center justify-center gap-1 ${active ? 'text-gray-900 border-t-2 border-gray-900' : 'text-gray-400'}`}>
-                                <Icon className="w-5 h-5" />
-                                <span className="text-[9px] font-medium truncate w-full text-center px-1 leading-none">{item.label}</span>
-                            </Link>
-                        </React.Fragment>
-                    );
-                })}
+                {/* Center FAB spacer + button */}
+                <div className="flex items-center justify-center" style={{ width: '64px' }}>
+                    {/* Empty spacer in nav bar */}
+                </div>
+
+                {/* Right tabs */}
+                {mobileNavRight.map(item => (
+                    <MobileTab key={item.path} item={item} />
+                ))}
+
+                {/* Floating Action Button — absolutely positioned above */}
+                <Link
+                    to="/irrigations?new=true"
+                    aria-label="Nouvelle irrigation"
+                    title="Nouvelle irrigation"
+                    className="absolute left-1/2 -translate-x-1/2 -top-5 z-20 flex items-center justify-center w-13 h-13 rounded-full shadow-[0_6px_20px_rgba(14,165,233,0.45)] border-[3.5px] border-[#F9FAFB] active:scale-90 transition-all hover:brightness-105"
+                    style={{ background: 'linear-gradient(135deg, #0EA5E9, #06B6D4)', width: '52px', height: '52px' }}
+                >
+                    <Plus className="w-6 h-6 text-white stroke-[2.8]" />
+                </Link>
             </nav>
         </div>
     );
 };
 
 export default Layout;
+

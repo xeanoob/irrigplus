@@ -268,7 +268,33 @@ const Compensations = () => {
             )}
 
             {/* Table historique */}
-            <div className="pro-card overflow-hidden">
+            <div className="mobile-card-grid sm:hidden">
+                {compensations.map(c => (
+                    <div key={c.id} className="pro-card p-4 flex flex-col gap-2">
+                        <div className="flex justify-between items-center">
+                            <span className="font-bold text-sm text-gray-900">{new Date(c.date_jour).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                            <span className="text-[10px] text-gray-400">Validé par {c.admin_nom}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 bg-gray-50/70 p-2.5 rounded border border-gray-100 text-xs">
+                            <div>
+                                <span className="text-[10px] text-gray-400 uppercase font-medium block">Pompé</span>
+                                <span className="font-bold text-red-600 tabular-nums">{parseFloat(c.volume_total_pompe_m3).toLocaleString('fr-FR')} m³</span>
+                            </div>
+                            <div>
+                                <span className="text-[10px] text-gray-400 uppercase font-medium block">Restitué</span>
+                                <span className="font-bold text-green-600 tabular-nums">{parseFloat(c.volume_restitue_m3).toLocaleString('fr-FR')} m³</span>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+                {compensations.length === 0 && (
+                    <div className="pro-card p-8 text-center text-gray-400 text-sm">
+                        Aucune compensation enregistrée.
+                    </div>
+                )}
+            </div>
+
+            <div className="hidden sm:block pro-card overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>

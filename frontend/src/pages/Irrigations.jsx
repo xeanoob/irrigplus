@@ -198,6 +198,71 @@ const Irrigations = () => {
                 </div>
             </div>
 
+            {/* Mobile Card Grid */}
+            <div className="mobile-card-grid sm:hidden">
+                {irrigations.map(i => (
+                    <div key={i.id} className="pro-card p-4 flex flex-col gap-3">
+                        <div className="flex justify-between items-start">
+                            <div className="flex flex-col">
+                                <span className="font-bold text-gray-900 text-sm">{i.champ_nom}</span>
+                                <span className="text-xs text-gray-400">{i.type_culture}</span>
+                            </div>
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                                i.statut === 'fini' ? 'bg-green-50 text-green-700 border border-green-200' :
+                                i.statut === 'lance' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                                'bg-blue-50 text-blue-700 border border-blue-200'
+                            }`}>
+                                {i.statut === 'programme' ? 'programmé' : i.statut === 'lance' ? 'en cours' : 'terminé'}
+                            </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs bg-gray-50/70 p-2.5 rounded border border-gray-100">
+                            <div>
+                                <span className="text-[10px] text-gray-400 uppercase font-medium block">Date</span>
+                                <span className="font-medium text-gray-800 tabular-nums">{new Date(i.date_debut).toLocaleDateString('fr-FR')}</span>
+                            </div>
+                            <div>
+                                <span className="text-[10px] text-gray-400 uppercase font-medium block">Volume</span>
+                                <span className="font-bold text-cyan-600 tabular-nums">{parseFloat(i.volume_total_m3).toLocaleString('fr-FR')} m³</span>
+                            </div>
+                            <div>
+                                <span className="text-[10px] text-gray-400 uppercase font-medium block">Matériel</span>
+                                <span className="text-gray-700 truncate block">{i.pompe_nom || '-'} / {i.enrouleur_nom || '-'}</span>
+                            </div>
+                            <div>
+                                <span className="text-[10px] text-gray-400 uppercase font-medium block">Paramètre</span>
+                                <span className="text-gray-700 font-medium">
+                                    {i.methode_calcul === 'dose' ? `${parseFloat(i.dose_mm).toFixed(1)} mm` : `${parseFloat(i.duree_h).toFixed(2)} h`}
+                                </span>
+                            </div>
+                        </div>
+
+                        {(i.statut === 'programme' || i.statut === 'lance') && (
+                            <div className="pt-1 flex gap-2">
+                                {i.statut === 'programme' && (
+                                    <button onClick={() => handleStatutChange(i.id, 'lance')}
+                                        className="flex-1 py-2 rounded text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 flex items-center justify-center gap-1.5 transition-colors">
+                                        <Play className="w-3.5 h-3.5" /> Démarrer l'irrigation
+                                    </button>
+                                )}
+                                {i.statut === 'lance' && (
+                                    <button onClick={() => handleStatutChange(i.id, 'fini')}
+                                        className="flex-1 py-2 rounded text-xs font-bold bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 flex items-center justify-center gap-1.5 transition-colors">
+                                        <CheckCircle2 className="w-3.5 h-3.5" /> Terminer l'irrigation
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                ))}
+                {irrigations.length === 0 && (
+                    <div className="pro-card p-8 text-center text-gray-400 text-sm">
+                        Aucune session d'irrigation trouvée.
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table View */}
             <div className="desktop-table-container">
                 <table className="w-full text-sm">
                     <thead>

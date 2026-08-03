@@ -55,10 +55,10 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs, pompes, enrouleurs
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative bg-white rounded-lg shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div className="relative bg-white rounded-lg shadow-2xl w-full max-w-lg max-h-[92dvh] overflow-y-auto">
+                <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
                     <div className="flex items-center gap-2">
                         <Droplets className="w-4 h-4 text-cyan-500" />
                         <h3 className="text-sm font-semibold text-gray-900">Nouvelle session d'irrigation</h3>
@@ -68,7 +68,7 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs, pompes, enrouleurs
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3.5 sm:space-y-4">
                     <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">Champ *</label>
                         <select
