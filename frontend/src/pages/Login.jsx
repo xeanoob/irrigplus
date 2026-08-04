@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Droplets } from 'lucide-react';
+
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 const Login = () => {
     const { login } = useAuth();
@@ -9,6 +12,26 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [waking, setWaking] = useState(false);
+
+    // Warm up backend as soon as Login page is shown
+    useEffect(() => {
+        const wakeUp = async () => {
+            try {
+                await axios.get(`${API_URL.replace(/\/api$/, '')}/`, { timeout: 5000 });
+            } catch {
+                // Backend is probably still asleep — that's okay, login will retry
+                setWaking(true);
+                try {
+                    await axios.get(`${API_URL.replace(/\/api$/, '')}/`, { timeout: 15000 });
+                } catch {
+                    // Still down — login will handle errors
+                }
+                setWaking(false);
+            }
+        };
+        wakeUp();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,7 +41,12 @@ const Login = () => {
             await login(email, password);
             toast.success('Connexion réussie !');
         } catch (err) {
-            const msg = err.response?.data?.error || 'Erreur de connexion';
+            let msg;
+            if (err.code === 'ECONNABORTED' || !err.response) {
+                msg = 'Le serveur met du temps à répondre. Réessayez dans quelques secondes.';
+            } else {
+                msg = err.response?.data?.error || 'Erreur de connexion';
+            }
             setError(msg);
             toast.error(msg);
         } finally {
@@ -33,6 +61,12 @@ const Login = () => {
                     <img src="/logotransparent.png" alt="Logo iRRIG+" className="h-20 w-auto object-contain mb-3 drop-shadow" />
                     <h1 className="text-xl font-bold text-white uppercase tracking-widest">iRRIG+</h1>
                     <p className="text-sm text-gray-400 mt-1">Gestion d'irrigation agricole</p>
+                    {waking && (
+                        <div className="mt-3 flex items-center gap-2 text-xs text-amber-400">
+                            <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                            Réveil du serveur en cours…
+                        </div>
+                    )}
                 </div>
 
                 <div className="bg-white border border-gray-100 shadow-xl rounded-2xl p-6 sm:p-7 backdrop-blur-xs">

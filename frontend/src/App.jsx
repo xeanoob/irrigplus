@@ -16,8 +16,8 @@ const Utilisateurs = lazy(() => import('./pages/Utilisateurs'));
 const Compensations = lazy(() => import('./pages/Compensations'));
 const Logs = lazy(() => import('./pages/Logs'));
 
-/** Splash screen React — minimaliste et rapide */
-const SplashScreen = () => (
+/** Splash screen React — with cold-start awareness */
+const SplashScreen = ({ coldStart = false }) => (
   <div className="fixed inset-0 z-[9998] flex flex-col items-center justify-center transition-opacity duration-300"
     style={{ background: 'linear-gradient(160deg, #F9FAFB 0%, #EFF6FF 50%, #F0FDF4 100%)' }}>
     <img
@@ -50,6 +50,12 @@ const SplashScreen = () => (
         />
       ))}
     </div>
+    {coldStart && (
+      <div className="mt-8 text-center animate-fade-in" style={{ animation: 'splash-fade-in 0.5s ease both' }}>
+        <p className="text-sm text-gray-500 font-medium">Réveil du serveur en cours…</p>
+        <p className="text-xs text-gray-400 mt-1">Première connexion — cela peut prendre quelques secondes</p>
+      </div>
+    )}
   </div>
 );
 
@@ -60,15 +66,15 @@ const PageFallback = () => (
 );
 
 const ProtectedRoute = ({ children, roles }) => {
-  const { user, loading } = useAuth();
-  if (loading) return <SplashScreen />;
+  const { user, loading, coldStart } = useAuth();
+  if (loading) return <SplashScreen coldStart={coldStart} />;
   if (!user) return <Navigate to="/login" />;
   if (roles && !roles.includes(user.role)) return <Navigate to="/" />;
   return children;
 };
 
 function AppRoutes() {
-  const { user, loading } = useAuth();
+  const { user, loading, coldStart } = useAuth();
 
   // Suppression immédiate et fluide du splash natif dès que l'authentification est prête
   useEffect(() => {
@@ -84,7 +90,7 @@ function AppRoutes() {
     }
   }, [loading]);
 
-  if (loading) return <SplashScreen />;
+  if (loading) return <SplashScreen coldStart={coldStart} />;
 
   return (
     <Suspense fallback={<PageFallback />}>

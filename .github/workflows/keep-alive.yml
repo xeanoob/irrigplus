@@ -1,0 +1,19 @@
+name: Keep Backend Alive
+
+on:
+  schedule:
+    # Ping every 14 minutes to prevent Render free-tier cold starts (15min timeout)
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend
+        run: |
+          echo "Pinging backend to prevent cold start..."
+          curl -sf --max-time 30 "${{ secrets.BACKEND_URL }}" || echo "Backend may be waking up, retrying..."
+          sleep 5
+          curl -sf --max-time 30 "${{ secrets.BACKEND_URL }}" || echo "Ping failed — backend may need manual check"
+          echo "Done!"
