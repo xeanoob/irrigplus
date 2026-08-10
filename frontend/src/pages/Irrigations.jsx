@@ -112,12 +112,14 @@ const Irrigations = () => {
     };
 
     const totalVolumeM3 = irrigations.reduce((sum, i) => sum + parseFloat(i.volume_total_m3), 0);
+    const totalVolumeLitres = totalVolumeM3 * 1000;
+    const formatLitres = (m3) => (parseFloat(m3) * 1000).toLocaleString('fr-FR', { maximumFractionDigits: 0 });
 
     const exportCSV = () => {
-        const header = 'Date,Champ,Culture,Pompe,Enrouleur,Méthode,Dose (mm),Temps (h),Volume (m3)\n';
+        const header = 'Date,Champ,Culture,Pompe,Enrouleur,Méthode,Distance (m),Dose (mm),Temps (h),Volume (m3)\n';
         const rows = irrigations.map(i => {
             const date = new Date(i.date_debut).toLocaleDateString('fr-FR');
-            return `"${date}","${i.champ_nom}","${i.type_culture}","${i.pompe_nom}","${i.enrouleur_nom}","${i.methode_calcul}",${i.dose_mm || ''},${i.duree_h || ''},${i.volume_total_m3}`;
+            return `"${date}","${i.champ_nom}","${i.type_culture}","${i.pompe_nom}","${i.enrouleur_nom}","${i.methode_calcul}",${i.distance_deroulee || ''},${i.dose_mm || ''},${i.duree_h || ''},${i.volume_total_m3}`;
         }).join('\n');
         const blob = new Blob([header + rows], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
@@ -133,12 +135,13 @@ const Irrigations = () => {
         doc.text(`Total : ${totalVolumeM3.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} m³`, 14, 30);
         autoTable(doc, {
             startY: 36,
-            head: [['Date', 'Champ', 'Culture', 'Méthode', 'Volume (m³)', 'Statut']],
+            head: [['Date', 'Champ', 'Culture', 'Méthode', 'Distance', 'Volume (m³)', 'Statut']],
             body: irrigations.map(i => [
                 new Date(i.date_debut).toLocaleDateString('fr-FR'),
                 i.champ_nom,
                 i.type_culture,
                 i.methode_calcul === 'dose' ? `Dose ${i.dose_mm} mm` : `Temps ${i.duree_h} h`,
+                i.distance_deroulee ? `${i.distance_deroulee} m` : '-',
                 parseFloat(i.volume_total_m3).toLocaleString('fr-FR'),
                 i.statut
             ]),
@@ -166,16 +169,17 @@ const Irrigations = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                 <div className="pro-card p-3 sm:p-5 col-span-1">
                     <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Volume total</p>
-                    <p className="text-base sm:text-2xl font-bold text-gray-900 tabular-nums">{totalVolumeM3.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} <span className="text-xs font-normal text-gray-400">m³</span></p>
+                    <p className="text-base sm:text-2xl font-bold text-gray-900 tabular-nums">{totalVolumeLitres.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} <span className="text-xs font-normal text-gray-400">L</span></p>
+                    <p className="text-[10px] text-gray-400 tabular-nums mt-0.5">{totalVolumeM3.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} m³</p>
                 </div>
                 <div className="pro-card p-3 sm:p-5 col-span-1">
                     <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Sessions</p>
                     <p className="text-base sm:text-2xl font-bold text-gray-900 tabular-nums">{pagination.total}</p>
                 </div>
                 <div className="pro-card p-3 sm:p-5 col-span-2 sm:col-span-1">
-                    <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Vol. moyen / session</p>
+                    <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Moy. / session</p>
                     <p className="text-base sm:text-2xl font-bold text-gray-900 tabular-nums">
-                        {irrigations.length > 0 ? (totalVolumeM3 / irrigations.length).toLocaleString('fr-FR', { maximumFractionDigits: 2 }) : '0'} <span className="text-xs font-normal text-gray-400">m³</span>
+                        {irrigations.length > 0 ? formatLitres(totalVolumeM3 / irrigations.length) : '0'} <span className="text-xs font-normal text-gray-400">L</span>
                     </p>
                 </div>
             </div>
@@ -236,7 +240,7 @@ const Irrigations = () => {
                             </div>
                             <div>
                                 <span className="text-[10px] text-gray-400 uppercase font-medium block">Volume</span>
-                                <span className="font-bold text-cyan-600 tabular-nums">{parseFloat(i.volume_total_m3).toLocaleString('fr-FR')} m³</span>
+                                <span className="font-bold text-cyan-600 tabular-nums">{formatLitres(i.volume_total_m3)} L</span>
                             </div>
                             <div>
                                 <span className="text-[10px] text-gray-400 uppercase font-medium block">Matériel</span>
@@ -248,6 +252,19 @@ const Irrigations = () => {
                                     {i.methode_calcul === 'dose' ? `${parseFloat(i.dose_mm).toFixed(1)} mm` : `${parseFloat(i.duree_h).toFixed(2)} h`}
                                 </span>
                             </div>
+                            {(i.distance_deroulee || i.largeur_travail) && (
+                                <div className="col-span-2">
+                                    <span className="text-[10px] text-gray-400 uppercase font-medium block">Enrouleur</span>
+                                    <span className="text-gray-700 font-medium tabular-nums">
+                                        {i.distance_deroulee ? `${parseFloat(i.distance_deroulee).toLocaleString('fr-FR')}m` : '-'}
+                                        {' × '}
+                                        {i.largeur_travail ? `${parseFloat(i.largeur_travail).toLocaleString('fr-FR')}m` : '-'}
+                                        {i.distance_deroulee && i.largeur_travail && (
+                                            <span className="text-gray-400 font-normal"> = {(parseFloat(i.distance_deroulee) * parseFloat(i.largeur_travail) / 10000).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} ha</span>
+                                        )}
+                                    </span>
+                                </div>
+                            )}
                         </div>
 
                         {(i.statut === 'programme' || i.statut === 'lance') && (
@@ -284,7 +301,8 @@ const Irrigations = () => {
                             <th className="text-left px-4 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Champ</th>
                             <th className="text-left px-4 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Matériel</th>
                             <th className="text-left px-4 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Méthode</th>
-                            <th className="text-right px-4 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Volume (m³)</th>
+                            <th className="text-right px-4 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Distance</th>
+                            <th className="text-right px-4 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Volume</th>
                             <th className="text-right px-4 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
                         </tr>
                     </thead>
@@ -315,7 +333,10 @@ const Irrigations = () => {
                                         </span>
                                     )}
                                 </td>
-                                <td className="px-4 py-3 text-right font-bold text-gray-900 tabular-nums">{parseFloat(i.volume_total_m3).toLocaleString('fr-FR')} m³</td>
+                                <td className="px-4 py-3 text-right text-xs text-gray-500 tabular-nums">
+                                    {i.distance_deroulee ? `${parseFloat(i.distance_deroulee).toLocaleString('fr-FR')} m` : '-'}
+                                </td>
+                                <td className="px-4 py-3 text-right font-bold text-gray-900 tabular-nums">{formatLitres(i.volume_total_m3)} <span className="text-[10px] font-medium text-gray-400">L</span></td>
                                 <td className="px-4 py-3 text-right">
                                     {i.statut === 'programme' && (
                                         <button onClick={() => handleStatutChange(i.id, 'lance')}
@@ -333,7 +354,7 @@ const Irrigations = () => {
                             </tr>
                         ))}
                         {irrigations.length === 0 && (
-                            <tr><td colSpan={6} className="text-center py-12 text-gray-400 text-sm">Aucune session d'irrigation</td></tr>
+                            <tr><td colSpan={7} className="text-center py-12 text-gray-400 text-sm">Aucune session d'irrigation</td></tr>
                         )}
                     </tbody>
                 </table>

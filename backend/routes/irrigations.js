@@ -77,18 +77,24 @@ router.get('/', verifyToken, async (req, res) => {
 // POST create irrigation session
 router.post('/', verifyToken, async (req, res) => {
     try {
-        const { champ_id, pompe_id, enrouleur_id, type_culture, dose_mm, duree_h, methode_calcul, statut, date_debut, date_fin } = req.body;
+        const { champ_id, pompe_id, enrouleur_id, type_culture, distance_deroulee, taille_buse_session, largeur_travail, dose_mm, duree_h, methode_calcul, statut, date_debut, date_fin } = req.body;
         
         let volume_total_m3 = 0;
 
         if (methode_calcul === 'dose') {
-            // Use enrouleur surface_travail (working area), not the champ total surface
-            const enrouleurRes = await pool.query('SELECT surface_travail FROM enrouleurs WHERE id = $1', [enrouleur_id]);
-            if(enrouleurRes.rows.length > 0 && enrouleurRes.rows[0].surface_travail) {
-                const surface_m2 = parseFloat(enrouleurRes.rows[0].surface_travail);
-                const dose = parseFloat(dose_mm || 0);
-                volume_total_m3 = (surface_m2 * dose) / 1000;
+            // Formule Jean-Victor: Volume = (distance_deroulee × largeur_travail × dose) / 1000
+            // largeur_travail est saisie par session (dépend de la buse utilisée ce jour-là)
+            // Fallback sur la largeur par défaut de l'enrouleur si non fournie
+            let largeur_m = parseFloat(largeur_travail || 0);
+            if (!largeur_m) {
+                const enrouleurRes = await pool.query('SELECT surface_travail FROM enrouleurs WHERE id = $1', [enrouleur_id]);
+                if (enrouleurRes.rows.length > 0 && enrouleurRes.rows[0].surface_travail) {
+                    largeur_m = parseFloat(enrouleurRes.rows[0].surface_travail);
+                }
             }
+            const distance = parseFloat(distance_deroulee || 0);
+            const dose = parseFloat(dose_mm || 0);
+            volume_total_m3 = (distance * largeur_m * dose) / 1000;
         } else if (methode_calcul === 'temps') {
             // Get pompe debit
             const pompeRes = await pool.query('SELECT debit_m3_h FROM pompes WHERE id = $1', [pompe_id]);
@@ -101,8 +107,8 @@ router.post('/', verifyToken, async (req, res) => {
 
         const query = `
             INSERT INTO irrigations 
-            (user_id, champ_id, pompe_id, enrouleur_id, type_culture, dose_mm, duree_h, methode_calcul, volume_total_m3, date_debut, date_fin, statut) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
+            (user_id, champ_id, pompe_id, enrouleur_id, type_culture, distance_deroulee, taille_buse_session, largeur_travail, dose_mm, duree_h, methode_calcul, volume_total_m3, date_debut, date_fin, statut) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
             RETURNING *
         `;
         const values = [
@@ -111,6 +117,9 @@ router.post('/', verifyToken, async (req, res) => {
             pompe_id, 
             enrouleur_id, 
             type_culture, 
+            distance_deroulee || null,
+            taille_buse_session || null,
+            largeur_travail || null,
             dose_mm || null, 
             duree_h || null, 
             methode_calcul, 

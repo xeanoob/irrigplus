@@ -90,12 +90,13 @@ const Enrouleurs = () => {
                             />
                         </div>
                         <div className="sm:col-span-2">
-                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Surface de travail (m², optionnel)</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Largeur de travail (m) *</label>
                             <input
                                 type="number"
                                 value={form.surface_travail}
                                 onChange={e => setForm({ ...form, surface_travail: e.target.value })}
-                                placeholder="ex: 30000"
+                                placeholder="ex: 80"
+                                required
                                 className="w-full bg-white border border-gray-300 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-cyan-600 focus:border-cyan-600 outline-none transition-all"
                             />
                         </div>
@@ -143,7 +144,7 @@ const Enrouleurs = () => {
                                             </span>
                                             {e.surface_travail && (
                                                 <span className="text-xs text-gray-400">
-                                                    {parseFloat(e.surface_travail).toLocaleString('fr-FR')} m²
+                                                    Largeur : {parseFloat(e.surface_travail).toLocaleString('fr-FR')} m
                                                 </span>
                                             )}
                                         </div>

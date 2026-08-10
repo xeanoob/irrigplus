@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS pompes (
 );
 
 -- Enrouleurs (et buses)
+-- surface_travail = largeur de travail de l'enrouleur en mètres (ex: 80m)
 CREATE TABLE IF NOT EXISTS enrouleurs (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -53,6 +54,9 @@ CREATE TABLE IF NOT EXISTS irrigations (
     pompe_id INTEGER NOT NULL REFERENCES pompes(id) ON DELETE CASCADE,
     enrouleur_id INTEGER NOT NULL REFERENCES enrouleurs(id) ON DELETE CASCADE,
     type_culture VARCHAR(100) NOT NULL,
+    distance_deroulee NUMERIC(10,2),
+    taille_buse_session VARCHAR(100),
+    largeur_travail NUMERIC(10,2),
     dose_mm NUMERIC(10,2),
     duree_h NUMERIC(10,2),
     methode_calcul VARCHAR(10) NOT NULL CHECK (methode_calcul IN ('dose', 'temps')),
@@ -88,8 +92,9 @@ INSERT INTO champs (user_id, nom_champ, surface_m2) VALUES (2, 'Parcelle Ouest',
 INSERT INTO pompes (user_id, nom, debit_m3_h) VALUES (2, 'Pompe Principale 100m3', 100.00);
 INSERT INTO pompes (user_id, nom, debit_m3_h) VALUES (2, 'Petite Pompe 20m3', 20.00);
 
-INSERT INTO enrouleurs (user_id, nom, surface_travail, taille_buse) VALUES (2, 'Enrouleur 300m', 10000, '22mm');
-INSERT INTO enrouleurs (user_id, nom, surface_travail, taille_buse) VALUES (2, 'Enrouleur 500m', 20000, '26mm');
+-- surface_travail = largeur de travail en mètres
+INSERT INTO enrouleurs (user_id, nom, surface_travail, taille_buse) VALUES (2, 'Enrouleur 300m', 60, '22mm');
+INSERT INTO enrouleurs (user_id, nom, surface_travail, taille_buse) VALUES (2, 'Enrouleur 500m', 80, '26mm');
 
 -- Indices de performance
 CREATE INDEX IF NOT EXISTS idx_champs_actif ON champs(actif);
