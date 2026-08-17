@@ -6,6 +6,7 @@ import { Plus, Trash2, Droplets, Filter, ChevronLeft, ChevronRight, Play, CheckC
 import { useSync } from '../context/SyncContext';
 import ExportMenu from '../components/ExportMenu';
 import IrrigationModal from '../components/IrrigationModal';
+import LiveEnrouleurTracker from '../components/LiveEnrouleurTracker';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -21,6 +22,7 @@ const Irrigations = () => {
     const [enrouleurs, setEnrouleurs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [pagination, setPagination] = useState({ page: 1, limit: 50, total: 0, totalPages: 1 });
     
     // Filters
@@ -84,16 +86,19 @@ const Irrigations = () => {
             return;
         }
 
+        setIsSubmitting(true);
         try {
             await axios.post(`${API_URL}/irrigations`, form);
-            toast.success('Session d\'irrigation enregistrée');
+            toast.success(form.statut === 'lance' ? 'Tour d\'eau démarré en direct !' : 'Session d\'irrigation enregistrée !');
             setShowModal(false);
             if (location.search.includes('new=true')) {
                 navigate('/irrigations', { replace: true });
             }
             fetchAll(1);
         } catch (err) {
-            toast.error(err.response?.data?.error || 'Erreur');
+            toast.error(err.response?.data?.error || 'Erreur lors de l\'enregistrement');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -153,15 +158,18 @@ const Irrigations = () => {
 
     return (
         <div className="max-w-6xl mx-auto flex flex-col gap-4 sm:gap-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3 sm:p-4 rounded-md shadow-sm border border-gray-100">
+            {/* Live Active Enrouleurs Tracker */}
+            <LiveEnrouleurTracker onStatusChanged={() => fetchAll(pagination.page)} />
+
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3.5 sm:p-4 rounded-xl shadow-xs border border-gray-100">
                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <Droplets className="w-5 h-5 text-cyan-500" />
                     Irrigations
                 </h2>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                     <ExportMenu onExportCSV={exportCSV} onExportPDF={exportPDF} />
-                    <button onClick={() => setShowModal(true)} className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-1.5 whitespace-nowrap">
-                        <Plus className="w-4 h-4" /> Nouvelle session
+                    <button onClick={() => setShowModal(true)} className="bg-gray-900 text-white px-3.5 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors flex items-center gap-1.5 whitespace-nowrap min-h-[42px]">
+                        <Plus className="w-4 h-4 stroke-[2.5]" /> Nouvelle session
                     </button>
                 </div>
             </div>
@@ -393,6 +401,7 @@ const Irrigations = () => {
                 champs={champs}
                 pompes={pompes}
                 enrouleurs={enrouleurs}
+                isSubmitting={isSubmitting}
             />
         </div>
     );

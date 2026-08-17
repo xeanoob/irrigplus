@@ -103,24 +103,22 @@ button {
 }
 
 /* Mobile modal & form fixes */
+body.modal-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
 @media (max-width: 640px) {
-  /* Prevent body scroll when modal is open */
-  body.modal-open {
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-  }
-
   /* Smoother scroll inside modals */
-  .overflow-y-auto {
+  .modal-scroll-area {
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 
-  /* Compact inputs on mobile */
+  /* Compact inputs on mobile cards */
   .pro-card input,
   .pro-card select {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
   }
 }

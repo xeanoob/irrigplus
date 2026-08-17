@@ -14,6 +14,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { useAuth } from '../context/AuthContext';
+import LiveEnrouleurTracker from '../components/LiveEnrouleurTracker';
 
 ChartJS.register(
     CategoryScale,
@@ -43,15 +44,16 @@ const Dashboard = () => {
         { value: 'lastYear', label: 'L\'année dernière' }
     ];
 
+    const fetchStats = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/dashboard/stats?range=${range}`);
+            setStats(res.data);
+        } catch (err) { console.error(err); }
+        setLoading(false);
+    };
+
     useEffect(() => {
-        const fetchStats = async () => {
-            setLoading(true);
-            try {
-                const res = await axios.get(`${API_URL}/dashboard/stats?range=${range}`);
-                setStats(res.data);
-            } catch (err) { console.error(err); }
-            setLoading(false);
-        };
+        setLoading(true);
         fetchStats();
     }, [range]);
 
@@ -118,12 +120,15 @@ const Dashboard = () => {
 
     return (
         <div className="max-w-6xl mx-auto flex flex-col gap-4 sm:gap-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3 sm:p-4 rounded-md shadow-sm border border-gray-100">
+            {/* Live Active Enrouleurs Tracker */}
+            <LiveEnrouleurTracker onStatusChanged={fetchStats} />
+
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3.5 sm:p-4 rounded-xl shadow-xs border border-gray-100">
                 <h2 className="text-base sm:text-lg font-bold text-gray-900">Tableau de Bord {user?.role === 'admin' && <span className="text-xs font-normal text-purple-600 ml-1">(Vue Globale)</span>}</h2>
                 <select 
                     value={range} 
                     onChange={e => setRange(e.target.value)}
-                    className="w-full sm:w-auto bg-gray-50 border border-gray-200 text-gray-900 text-xs sm:text-sm font-medium rounded-md focus:ring-gray-900 focus:border-gray-900 block p-2 cursor-pointer"
+                    className="w-full sm:w-auto bg-gray-50 border border-gray-200 text-gray-900 text-xs sm:text-sm font-medium rounded-lg focus:ring-gray-900 focus:border-gray-900 block p-2 cursor-pointer"
                 >
                     {ranges.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                 </select>

@@ -87,17 +87,21 @@ const Compensations = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
+        if (volumeRestitue === '' || parseFloat(volumeRestitue) < 0) {
+            toast.error('Veuillez indiquer un volume à restituer valide');
+            return;
+        }
         try {
             await axios.post(`${API_URL}/compensations`, {
                 date_jour: dateJour,
-                volume_total_pompe_m3: calculJour,
-                volume_restitue_m3: volumeRestitue
+                volume_total_pompe_m3: calculJour || 0,
+                volume_restitue_m3: parseFloat(volumeRestitue)
             });
-            toast.success('Compensation validée');
+            toast.success('Compensation validée avec succès !');
             fetchCompensations();
             fetchTrend();
         } catch (err) {
-            toast.error('Erreur lors de la sauvegarde');
+            toast.error(err.response?.data?.error || 'Erreur lors de la sauvegarde');
         }
     };
 
@@ -221,6 +225,8 @@ const Compensations = () => {
                         <input
                             type="number"
                             step="0.1"
+                            min="0"
+                            inputMode="decimal"
                             value={volumeRestitue}
                             onChange={e => setVolumeRestitue(e.target.value)}
                             required
