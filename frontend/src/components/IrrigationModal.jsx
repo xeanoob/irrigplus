@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Droplets, Check, Play, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Droplets, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const CULTURE_PRESETS = ['Maïs', 'Blé', 'Soja', 'Tournesol', 'Colza', 'Orge'];
@@ -157,25 +157,24 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
 
     if (!isOpen) return null;
 
-    const inputClass = "w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all";
-    const labelClass = "block text-xs font-semibold text-gray-700 mb-1";
-
+    const inputClass = "w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-base sm:text-sm text-gray-900 focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all";
+    const labelClass = "block text-xs font-bold text-gray-700 mb-1";
     const hasMissingData = champs.length === 0 || pompes.length === 0 || enrouleurs.length === 0;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
             {/* Backdrop */}
             <div 
-                className="fixed inset-0 bg-black/50 transition-opacity" 
+                className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity" 
                 onClick={onClose} 
                 aria-hidden="true"
             />
 
             {/* Modal Box */}
-            <div className="relative bg-white rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-lg z-10 flex flex-col overflow-hidden max-h-[92dvh] sm:max-h-[88vh]">
+            <div className="relative bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-lg z-10 flex flex-col overflow-hidden max-h-[92dvh] sm:max-h-[88vh]">
                 
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-gray-200 shrink-0">
+                <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-gray-200 shrink-0 bg-white">
                     <div className="flex items-center gap-2">
                         <div className="p-1.5 bg-gray-100 rounded-lg text-gray-900">
                             <Droplets className="w-4 h-4 text-cyan-600" />
@@ -185,7 +184,7 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                     <button 
                         type="button"
                         onClick={onClose} 
-                        className="p-1 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
                         aria-label="Fermer"
                     >
                         <X className="w-5 h-5" />
@@ -193,67 +192,66 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                 </div>
 
                 {/* Form Body */}
-                <div className="modal-scroll-area overflow-y-auto flex-1 p-4 sm:p-5 space-y-4">
+                <div className="modal-scroll-area overflow-y-auto flex-1 p-3.5 sm:p-5 space-y-3 sm:space-y-4">
                     {hasMissingData && (
-                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-xs flex items-start gap-2">
+                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs flex items-start gap-2">
                             <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                             <span>Veuillez vous assurer d'avoir configuré au moins un champ, une pompe et un enrouleur.</span>
                         </div>
                     )}
 
-                    <form id="irrigation-form" onSubmit={handleSubmit} className="space-y-4">
+                    <form id="irrigation-form" onSubmit={handleSubmit} className="space-y-3 sm:space-y-3.5">
                         
-                        {/* Statut du tour d'eau */}
+                        {/* 0. Statut du tour d'eau (Compact Segmented Control) */}
                         <div>
-                            <label className={labelClass}>Statut</label>
-                            <div className="grid grid-cols-2 gap-2">
+                            <label className={labelClass}>Statut du tour d'eau</label>
+                            <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
                                 <button
                                     type="button"
                                     onClick={() => setForm({ ...form, statut: 'lance' })}
-                                    className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 ${
+                                    className={`py-2 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                                         form.statut === 'lance'
-                                            ? 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold'
-                                            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                            ? 'bg-white text-emerald-800 shadow-xs'
+                                            : 'text-gray-600 hover:text-gray-900'
                                     }`}
                                 >
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                    En cours (Démarrer le suivi)
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                                    <span className="truncate">En direct (Suivi live)</span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setForm({ ...form, statut: 'fini' })}
-                                    className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 ${
+                                    className={`py-2 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                                         form.statut === 'fini'
-                                            ? 'bg-gray-100 text-gray-900 border-gray-300 font-bold'
-                                            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                            ? 'bg-white text-gray-900 shadow-xs'
+                                            : 'text-gray-600 hover:text-gray-900'
                                     }`}
                                 >
-                                    <CheckCircle2 className="w-3.5 h-3.5 text-gray-500" />
-                                    Déjà terminée (Historique)
+                                    <span className="truncate">Session passée</span>
                                 </button>
                             </div>
                         </div>
 
-                        {/* Parcelle & Culture */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label className={labelClass}>Parcelle (Champ) *</label>
+                        {/* 1. Ligne Parcelle & Culture (2 colonnes sur mobile & desktop) */}
+                        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                            <div className="min-w-0">
+                                <label className={labelClass}>Parcelle *</label>
                                 <select 
                                     value={form.champ_id} 
                                     onChange={e => setForm({ ...form, champ_id: e.target.value })} 
                                     required 
                                     className={inputClass}
                                 >
-                                    <option value="">Choisir un champ...</option>
+                                    <option value="">Sélectionner...</option>
                                     {champs.map(c => (
                                         <option key={c.id} value={c.id}>
-                                            {c.nom_champ} ({(parseFloat(c.surface_m2) / 10000).toFixed(1)} ha)
+                                            {c.nom_champ}
                                         </option>
                                     ))}
                                 </select>
                             </div>
 
-                            <div>
+                            <div className="min-w-0">
                                 <label className={labelClass}>Culture *</label>
                                 <input 
                                     type="text" 
@@ -261,7 +259,7 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                                     value={form.type_culture} 
                                     onChange={e => setForm({ ...form, type_culture: e.target.value })} 
                                     required 
-                                    placeholder="ex: Maïs, Blé..." 
+                                    placeholder="ex: Maïs" 
                                     className={inputClass} 
                                 />
                                 <datalist id="cultures-list">
@@ -270,9 +268,9 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                             </div>
                         </div>
 
-                        {/* Pompe & Enrouleur */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
+                        {/* 2. Ligne Pompe & Enrouleur (2 colonnes sur mobile & desktop) */}
+                        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                            <div className="min-w-0">
                                 <label className={labelClass}>Pompe *</label>
                                 <select 
                                     value={form.pompe_id} 
@@ -280,7 +278,7 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                                     required 
                                     className={inputClass}
                                 >
-                                    <option value="">Choisir une pompe...</option>
+                                    <option value="">Sélectionner...</option>
                                     {pompes.map(p => (
                                         <option key={p.id} value={p.id}>
                                             {p.nom} ({parseFloat(p.debit_m3_h)} m³/h)
@@ -289,7 +287,7 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                                 </select>
                             </div>
 
-                            <div>
+                            <div className="min-w-0">
                                 <label className={labelClass}>Enrouleur *</label>
                                 <select 
                                     value={form.enrouleur_id} 
@@ -297,7 +295,7 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                                     required 
                                     className={inputClass}
                                 >
-                                    <option value="">Choisir un enrouleur...</option>
+                                    <option value="">Sélectionner...</option>
                                     {enrouleurs.map(e => (
                                         <option key={e.id} value={e.id}>
                                             {e.nom} (Buse {e.taille_buse})
@@ -307,9 +305,9 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                             </div>
                         </div>
 
-                        {/* Date & Heure */}
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
+                        {/* 3. Ligne Date & Heure (2 colonnes) */}
+                        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                            <div className="min-w-0">
                                 <label className={labelClass}>Date *</label>
                                 <input 
                                     type="date" 
@@ -319,8 +317,8 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                                     className={inputClass} 
                                 />
                             </div>
-                            <div>
-                                <label className={labelClass}>Heure de départ *</label>
+                            <div className="min-w-0">
+                                <label className={labelClass}>Heure départ *</label>
                                 <input 
                                     type="time" 
                                     value={form.heure_debut} 
@@ -331,14 +329,14 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                             </div>
                         </div>
 
-                        {/* Méthode de calcul (Dose vs Temps) */}
-                        <div className="pt-1">
+                        {/* 4. Méthode de calcul (Toggle compact) */}
+                        <div>
                             <label className={labelClass}>Méthode de calcul</label>
-                            <div className="grid grid-cols-2 gap-2 bg-gray-100 p-1 rounded-lg">
+                            <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
                                 <button
                                     type="button"
                                     onClick={() => setForm({ ...form, methode_calcul: 'dose', duree_h: '' })}
-                                    className={`py-1.5 rounded-md text-xs font-semibold transition-all ${
+                                    className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
                                         form.methode_calcul === 'dose'
                                             ? 'bg-white text-gray-900 shadow-xs'
                                             : 'text-gray-600 hover:text-gray-900'
@@ -349,7 +347,7 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                                 <button
                                     type="button"
                                     onClick={() => setForm({ ...form, methode_calcul: 'temps', dose_mm: '', distance_deroulee: '' })}
-                                    className={`py-1.5 rounded-md text-xs font-semibold transition-all ${
+                                    className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
                                         form.methode_calcul === 'temps'
                                             ? 'bg-white text-gray-900 shadow-xs'
                                             : 'text-gray-600 hover:text-gray-900'
@@ -360,54 +358,55 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                             </div>
                         </div>
 
-                        {/* Champs selon méthode */}
+                        {/* 5. Paramètres selon méthode (2 colonnes) */}
                         {form.methode_calcul === 'dose' ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div>
-                                    <label className={labelClass}>Distance déroulée (m) *</label>
-                                    <input
-                                        type="number"
-                                        step="1"
-                                        min="1"
-                                        inputMode="numeric"
-                                        value={form.distance_deroulee}
-                                        onChange={e => setForm({ ...form, distance_deroulee: e.target.value })}
-                                        required
-                                        placeholder="ex: 400"
-                                        className={inputClass}
-                                    />
-                                </div>
-                                <div>
-                                    <div className="flex items-center justify-between mb-1">
-                                        <label className="text-xs font-semibold text-gray-700">Dose (mm) *</label>
-                                        <div className="flex gap-1">
-                                            {DOSE_PRESETS.map(d => (
-                                                <button
-                                                    key={d}
-                                                    type="button"
-                                                    onClick={() => setForm({ ...form, dose_mm: String(d) })}
-                                                    className={`px-1.5 py-0.5 rounded text-[11px] font-medium border ${
-                                                        parseFloat(form.dose_mm) === d 
-                                                            ? 'bg-cyan-50 border-cyan-300 text-cyan-800' 
-                                                            : 'bg-white border-gray-200 text-gray-600'
-                                                    }`}
-                                                >
-                                                    {d}
-                                                </button>
-                                            ))}
-                                        </div>
+                            <div className="space-y-2">
+                                <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                                    <div className="min-w-0">
+                                        <label className={labelClass}>Distance déroulée (m) *</label>
+                                        <input
+                                            type="number"
+                                            step="1"
+                                            min="1"
+                                            inputMode="numeric"
+                                            value={form.distance_deroulee}
+                                            onChange={e => setForm({ ...form, distance_deroulee: e.target.value })}
+                                            required
+                                            placeholder="ex: 400"
+                                            className={inputClass}
+                                        />
                                     </div>
-                                    <input
-                                        type="number"
-                                        step="0.5"
-                                        min="0.5"
-                                        inputMode="decimal"
-                                        value={form.dose_mm}
-                                        onChange={e => setForm({ ...form, dose_mm: e.target.value })}
-                                        required
-                                        placeholder="ex: 25"
-                                        className={inputClass}
-                                    />
+                                    <div className="min-w-0">
+                                        <label className={labelClass}>Dose (mm) *</label>
+                                        <input
+                                            type="number"
+                                            step="0.5"
+                                            min="0.5"
+                                            inputMode="decimal"
+                                            value={form.dose_mm}
+                                            onChange={e => setForm({ ...form, dose_mm: e.target.value })}
+                                            required
+                                            placeholder="ex: 25"
+                                            className={inputClass}
+                                        />
+                                    </div>
+                                </div>
+                                {/* Puces rapides de dose */}
+                                <div className="flex gap-1.5 overflow-x-auto pb-0.5">
+                                    {DOSE_PRESETS.map(d => (
+                                        <button
+                                            key={d}
+                                            type="button"
+                                            onClick={() => setForm({ ...form, dose_mm: String(d) })}
+                                            className={`flex-1 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                                                parseFloat(form.dose_mm) === d 
+                                                    ? 'bg-cyan-50 border-cyan-400 text-cyan-900 font-bold' 
+                                                    : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                                            }`}
+                                        >
+                                            {d} mm
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
                         ) : (
@@ -427,9 +426,9 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                             </div>
                         )}
 
-                        {/* Résumé du calcul (Propre et discret) */}
+                        {/* 6. Résumé du calcul (Propre et discret) */}
                         {calc && (
-                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3.5 text-xs space-y-2">
+                            <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs space-y-2">
                                 <div className="flex items-baseline justify-between border-b border-gray-200/80 pb-2">
                                     <span className="text-gray-500 font-medium">Volume estimé</span>
                                     <span className="font-bold text-gray-900 text-sm tabular-nums">
@@ -440,43 +439,37 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                                     </span>
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-2 text-center pt-0.5">
-                                    {calc.vitesse_m_h != null && (
-                                        <div>
-                                            <span className="text-gray-400 block text-[10px] uppercase font-semibold">Vitesse enrouleur</span>
-                                            <span className="font-bold text-cyan-800 text-xs tabular-nums">
-                                                {Math.round(calc.vitesse_m_h)} m/h
-                                            </span>
-                                        </div>
-                                    )}
-                                    {calc.duree_h != null && (
-                                        <div>
-                                            <span className="text-gray-400 block text-[10px] uppercase font-semibold">Durée totale</span>
-                                            <span className="font-bold text-gray-900 text-xs tabular-nums">
-                                                {Math.floor(calc.duree_h)}h{String(Math.round((calc.duree_h % 1) * 60)).padStart(2, '0')}
-                                            </span>
-                                        </div>
-                                    )}
-                                    {calc.date_fin && (
-                                        <div>
-                                            <span className="text-gray-400 block text-[10px] uppercase font-semibold">Fin prévue</span>
-                                            <span className="font-bold text-gray-900 text-xs tabular-nums">
-                                                {calc.date_fin.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
-                                        </div>
-                                    )}
+                                <div className="grid grid-cols-3 gap-1.5 text-center pt-0.5">
+                                    <div className="min-w-0">
+                                        <span className="text-gray-400 block text-[10px] uppercase font-semibold truncate">Vitesse</span>
+                                        <span className="font-bold text-cyan-800 text-xs tabular-nums truncate block">
+                                            {calc.vitesse_m_h ? `${Math.round(calc.vitesse_m_h)} m/h` : '-'}
+                                        </span>
+                                    </div>
+                                    <div className="min-w-0">
+                                        <span className="text-gray-400 block text-[10px] uppercase font-semibold truncate">Durée</span>
+                                        <span className="font-bold text-gray-900 text-xs tabular-nums truncate block">
+                                            {calc.duree_h ? `${Math.floor(calc.duree_h)}h${String(Math.round((calc.duree_h % 1) * 60)).padStart(2, '0')}` : '-'}
+                                        </span>
+                                    </div>
+                                    <div className="min-w-0">
+                                        <span className="text-gray-400 block text-[10px] uppercase font-semibold truncate">Fin prévue</span>
+                                        <span className="font-bold text-gray-900 text-xs tabular-nums truncate block">
+                                            {calc.date_fin ? calc.date_fin.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '-'}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         )}
                     </form>
                 </div>
 
-                {/* Footer */}
-                <div className="shrink-0 px-4 sm:px-5 py-3 bg-gray-50 border-t border-gray-200 flex gap-2.5">
+                {/* Footer (Grid 3 colonnes sécurisée sans débordement) */}
+                <div className="shrink-0 px-3.5 sm:px-5 py-3 bg-white border-t border-gray-200 grid grid-cols-3 gap-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="flex-1 py-2.5 px-4 text-xs sm:text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="col-span-1 py-2.5 px-2 text-xs sm:text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors text-center"
                     >
                         Annuler
                     </button>
@@ -484,20 +477,14 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                         type="submit"
                         form="irrigation-form"
                         disabled={isSubmitting || hasMissingData}
-                        className="flex-2 py-2.5 px-4 text-xs sm:text-sm font-semibold text-white bg-gray-900 hover:bg-black rounded-lg transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
+                        className="col-span-2 py-2.5 px-3 text-xs sm:text-sm font-bold text-white bg-gray-900 hover:bg-black rounded-xl transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 truncate shadow-xs"
                     >
                         {isSubmitting ? (
-                            <span>Enregistrement...</span>
+                            <span className="truncate">Enregistrement...</span>
                         ) : form.statut === 'lance' ? (
-                            <>
-                                <Play className="w-3.5 h-3.5 fill-current" />
-                                <span>Démarrer le tour d'eau</span>
-                            </>
+                            <span className="truncate">Démarrer le tour d'eau</span>
                         ) : (
-                            <>
-                                <Check className="w-4 h-4" />
-                                <span>Enregistrer la session</span>
-                            </>
+                            <span className="truncate">Enregistrer la session</span>
                         )}
                     </button>
                 </div>
