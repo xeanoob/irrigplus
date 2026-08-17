@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Plus, MapPin, Trash2, X, Check, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import useBodyScrollLock from '../hooks/useBodyScrollLock';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -13,6 +14,8 @@ const Champs = () => {
     const [showModal, setShowModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [form, setForm] = useState({ nom_champ: '', surface_m2: '' });
+
+    useBodyScrollLock(showModal);
 
     useEffect(() => { fetchChamps(); }, []);
 
@@ -30,12 +33,10 @@ const Champs = () => {
     const handleOpenModal = () => {
         setForm({ nom_champ: '', surface_m2: '' });
         setShowModal(true);
-        document.body.classList.add('modal-open');
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
-        document.body.classList.remove('modal-open');
     };
 
     const handleSubmit = async (e) => {

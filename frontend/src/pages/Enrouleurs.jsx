@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Plus, Replace, Trash2, X, Check } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import useBodyScrollLock from '../hooks/useBodyScrollLock';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 const BUSE_CHIPS = ['20mm', '22mm', '24mm', '26mm', '28mm', '30mm'];
@@ -15,6 +16,8 @@ const Enrouleurs = () => {
     const [showModal, setShowModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [form, setForm] = useState({ nom: '', surface_travail: '70', taille_buse: '24mm' });
+
+    useBodyScrollLock(showModal);
 
     useEffect(() => { fetchEnrouleurs(); }, []);
 
@@ -32,12 +35,10 @@ const Enrouleurs = () => {
     const handleOpenModal = () => {
         setForm({ nom: '', surface_travail: '70', taille_buse: '24mm' });
         setShowModal(true);
-        document.body.classList.add('modal-open');
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
-        document.body.classList.remove('modal-open');
     };
 
     const handleSubmit = async (e) => {

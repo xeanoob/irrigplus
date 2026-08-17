@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Plus, UserCheck, UserX, Shield, Trash2, Pencil, X, Check, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import useBodyScrollLock from '../hooks/useBodyScrollLock';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -30,6 +31,8 @@ const Utilisateurs = () => {
     const [userToEdit, setUserToEdit] = useState(null);
     const [editForm, setEditForm] = useState({ nom: '', email: '' });
 
+    useBodyScrollLock(showCreateModal || showEditModal);
+
     useEffect(() => { fetchUsers(); }, []);
 
     const fetchUsers = async () => {
@@ -46,12 +49,10 @@ const Utilisateurs = () => {
     const handleOpenCreate = () => {
         setForm({ nom: '', email: '', mot_de_passe: '', role: 'agriculteur' });
         setShowCreateModal(true);
-        document.body.classList.add('modal-open');
     };
 
     const handleCloseCreate = () => {
         setShowCreateModal(false);
-        document.body.classList.remove('modal-open');
     };
 
     const handleCreate = async (e) => {

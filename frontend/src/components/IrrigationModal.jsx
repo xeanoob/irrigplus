@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { X, Droplets, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import useBodyScrollLock from '../hooks/useBodyScrollLock';
 
 const CULTURE_PRESETS = ['Maïs', 'Blé', 'Soja', 'Tournesol', 'Colza', 'Orge'];
 const DOSE_PRESETS = [15, 20, 25, 30, 35];
@@ -11,6 +12,8 @@ const getLocalTime = () => {
 };
 
 const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], enrouleurs = [], isSubmitting = false }) => {
+    useBodyScrollLock(isOpen);
+
     const [form, setForm] = useState({
         champ_id: '',
         pompe_id: '',
@@ -42,11 +45,7 @@ const IrrigationModal = ({ isOpen, onClose, onSubmit, champs = [], pompes = [], 
                 duree_h: '',
                 statut: 'lance',
             });
-            document.body.classList.add('modal-open');
-        } else {
-            document.body.classList.remove('modal-open');
         }
-        return () => document.body.classList.remove('modal-open');
     }, [isOpen, champs, pompes, enrouleurs]);
 
     const selectedEnrouleur = useMemo(() => {

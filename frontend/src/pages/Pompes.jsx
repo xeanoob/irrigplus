@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Plus, Settings2, Trash2, X, Check, Gauge } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import useBodyScrollLock from '../hooks/useBodyScrollLock';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -13,6 +14,8 @@ const Pompes = () => {
     const [showModal, setShowModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [form, setForm] = useState({ nom: '', debit_m3_h: '' });
+
+    useBodyScrollLock(showModal);
 
     useEffect(() => { fetchPompes(); }, []);
 
@@ -30,12 +33,10 @@ const Pompes = () => {
     const handleOpenModal = () => {
         setForm({ nom: '', debit_m3_h: '' });
         setShowModal(true);
-        document.body.classList.add('modal-open');
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
-        document.body.classList.remove('modal-open');
     };
 
     const handleSubmit = async (e) => {
